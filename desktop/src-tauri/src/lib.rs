@@ -4,13 +4,16 @@ mod discord;
 mod import;
 mod network;
 mod shared;
+mod skin;
 mod track_cache;
 
 use std::sync::{Arc, Mutex};
-use tauri::Manager;
+use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 
 use discord::DiscordState;
 use network::server::ServerState;
+
+const SOUNDCLOUD_URL: &str = "https://soundcloud.com";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -94,6 +97,19 @@ pub fn run() {
             audio::start_default_output_monitor(app.handle());
 
             app::tray::setup_tray(app).expect("failed to setup tray");
+
+            // Главное окно: внешний WebView на soundcloud.com со скином-инъекцией.
+            let url: tauri::Url = SOUNDCLOUD_URL
+                .parse()
+                .expect("failed to parse soundcloud url");
+            let _main = WebviewWindowBuilder::new(app, "main", WebviewUrl::External(url))
+                .title("EzzCloud")
+                .inner_size(1200.0, 800.0)
+                .min_inner_size(800.0, 470.0)
+                .decorations(false)
+                .initialization_script(skin::INJECT_SCRIPT)
+                .build()
+                .expect("failed to build main webview window");
 
             Ok(())
         })
