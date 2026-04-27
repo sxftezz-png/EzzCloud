@@ -282,6 +282,45 @@
     observer.observe(document.documentElement, { childList: true, subtree: false });
   }
 
+  /* ───────── window.open shim: popup → redirect ───────── */
+  // Tauri WebView2 не пускает popup-окна из коробки. SC OAuth (Google/Apple/
+  // Facebook) использует window.open(...,'popup'). Делаем popup-style вызовы
+  // обычным редиректом главного окна — большинство OAuth-провайдеров умеет
+  // отрабатывать redirect-flow (после логина возвращают cookies на callback,
+  // дальше SC сам подхватит сессию).
+  const _origOpen = window.open ? window.open.bind(window) : null;
+  const fakePopup = (url) => ({
+    closed: false,
+    close() {},
+    focus() {},
+    blur() {},
+    postMessage() {},
+    location: { href: url, replace(u) { window.location.href = u; } },
+    document: null,
+  });
+  window.open = function (url, target, features) {
+    if (!url) return _origOpen ? _origOpen(url, target, features) : null;
+    const looksLikePopup =
+      target === '_blank' ||
+      target === 'oauth-popup' ||
+      (typeof features === 'string' && /(width=|height=|popup)/i.test(features));
+
+    const isOAuth =
+      /accounts\.google\.com|facebook\.com\/(?:v\d+\/)?dialog|appleid\.apple\.com|github\.com\/login|api\.twitter\.com\/oauth/i.test(
+        url,
+      );
+
+    if (looksLikePopup || isOAuth) {
+      try {
+        window.location.href = url;
+      } catch {
+        if (_origOpen) return _origOpen(url, target, features);
+      }
+      return fakePopup(url);
+    }
+    return _origOpen ? _origOpen(url, target, features) : null;
+  };
+
   /* ───────── Dom-scrape: текущий трек для Discord/MediaSession ───────── */
   // Tauri-команд для discord_set_activity мы пока не дёргаем — у SC web уже
   // настроен MediaSession через Web Audio, OS его подхватит.

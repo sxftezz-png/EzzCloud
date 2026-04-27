@@ -1,6 +1,6 @@
 [package]
 name = "ezzcloud"
-version = "7.0.0"
+version = "7.0.1"
 description = "EzzCloud — десктоп клиент для SoundCloud"
 authors = ["inkerow"]
 edition = "2021"
