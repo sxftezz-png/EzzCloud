@@ -18,9 +18,9 @@ export const BYPASS_STREAMING_PREMIUM_BASE =
 export const BYPASS_IMAGES_BASE =
   import.meta.env.VITE_BYPASS_IMAGES_BASE || 'https://white.images.scdinternal.site';
 
-export const GITHUB_OWNER = 'zxcloli666';
-export const GITHUB_REPO = 'SoundCloud-Desktop';
-export const GITHUB_REPO_EN = 'SoundCloud-Desktop-EN';
+export const GITHUB_OWNER = 'sxftezz-png';
+export const GITHUB_REPO = 'EzzCloud';
+export const GITHUB_REPO_EN = 'EzzCloud';
 export const APP_VERSION = __APP_VERSION__;
 
 let _staticPort: number | null = null;

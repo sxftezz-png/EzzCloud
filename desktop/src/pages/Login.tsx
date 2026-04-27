@@ -41,7 +41,7 @@ export function Login() {
         </div>
 
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">SoundCloud Desktop</h1>
+          <h1 className="text-2xl font-bold tracking-tight">EzzCloud</h1>
           <p className="text-[13px] text-white/30 mt-2">
             {isPolling ? t('auth.signingIn') : 'Your music, your way'}
           </p>

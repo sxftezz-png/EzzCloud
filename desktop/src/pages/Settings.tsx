@@ -1,3 +1,4 @@
+import { openUrl } from '@tauri-apps/plugin-opener';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -15,6 +16,7 @@ import {
   removeWallpaper,
   saveWallpaperFromBuffer,
 } from '../lib/cache';
+import { APP_VERSION } from '../lib/constants';
 import { trackedInvoke } from '../lib/diagnostics';
 import { Globe, Link, Loader2, Star, Trash2, X } from '../lib/icons';
 import { useSubscription } from '../lib/subscription';
@@ -986,6 +988,26 @@ const AccountSection = React.memo(function AccountSection() {
   );
 });
 
+/* ── About Section ──────────────────────────────────────── */
+
+const AboutSection = React.memo(function AboutSection() {
+  return (
+    <section className="bg-white/[0.02] border border-white/[0.05] backdrop-blur-[60px] rounded-3xl p-6 shadow-xl">
+      <h3 className="text-[15px] font-bold text-white/80 tracking-tight mb-4">EzzCloud</h3>
+      <div className="space-y-2">
+        <p className="text-[13px] text-white/60">v{APP_VERSION} · форк SoundCloud Desktop</p>
+        <button
+          type="button"
+          onClick={() => openUrl('https://t.me/inkerow')}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.12] text-white/70 hover:text-white transition-all duration-300 cursor-pointer"
+        >
+          Telegram: @inkerow
+        </button>
+      </div>
+    </section>
+  );
+});
+
 /* ── Main ───────────────────────────────────────────────── */
 
 export function Settings() {
@@ -1002,6 +1024,7 @@ export function Settings() {
       <AudioDeviceSection />
       <ImportSection />
       <AccountSection />
+      <AboutSection />
     </div>
   );
 }

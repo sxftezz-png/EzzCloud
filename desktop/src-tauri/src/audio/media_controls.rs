@@ -40,8 +40,8 @@ pub fn start_media_controls(app: &AppHandle) {
             };
 
             let config = PlatformConfig {
-                display_name: "SoundCloud Desktop",
-                dbus_name: "soundcloud_desktop",
+                display_name: "EzzCloud",
+                dbus_name: "ezzcloud",
                 hwnd,
             };
 

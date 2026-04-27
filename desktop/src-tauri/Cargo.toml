@@ -1,12 +1,12 @@
 [package]
-name = "soundcloud-desktop"
+name = "ezzcloud"
 version = "6.8.0"
-description = "Beautiful Soundcloud Desktop app"
-authors = ["zxcloli666"]
+description = "EzzCloud — десктоп клиент для SoundCloud"
+authors = ["inkerow"]
 edition = "2021"
 
 [lib]
-name = "soundcloud_desktop_lib"
+name = "ezzcloud_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

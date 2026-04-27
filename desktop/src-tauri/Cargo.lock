@@ -1181,6 +1181,40 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af9673d8203fcb076b19dfd17e38b3d4ae9f44959416ea532ce72415a6020365"
 
 [[package]]
+name = "ezzcloud"
+version = "6.8.0"
+dependencies = [
+ "audiopus",
+ "base64 0.22.1",
+ "biquad",
+ "chrono",
+ "cpal",
+ "discord-rich-presence",
+ "futures-util",
+ "hex",
+ "http 1.4.0",
+ "libc",
+ "ogg",
+ "raw-window-handle",
+ "reqwest 0.12.28",
+ "rodio",
+ "serde",
+ "serde_json",
+ "sha2",
+ "souvlaki",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-http",
+ "tauri-plugin-opener",
+ "tauri-plugin-single-instance",
+ "tokio",
+ "urlencoding",
+ "warp",
+]
+
+[[package]]
 name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4203,40 +4237,6 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "soundcloud-desktop"
-version = "6.8.0"
-dependencies = [
- "audiopus",
- "base64 0.22.1",
- "biquad",
- "chrono",
- "cpal",
- "discord-rich-presence",
- "futures-util",
- "hex",
- "http 1.4.0",
- "libc",
- "ogg",
- "raw-window-handle",
- "reqwest 0.12.28",
- "rodio",
- "serde",
- "serde_json",
- "sha2",
- "souvlaki",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-http",
- "tauri-plugin-opener",
- "tauri-plugin-single-instance",
- "tokio",
- "urlencoding",
- "warp",
 ]
 
 [[package]]

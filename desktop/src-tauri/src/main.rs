@@ -89,5 +89,5 @@ fn main() {
         raise_linux_nofile_limit();
     }
 
-    soundcloud_desktop_lib::run()
+    ezzcloud_lib::run()
 }

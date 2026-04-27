@@ -15,7 +15,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
     TrayIconBuilder::new()
         .icon(app.default_window_icon().cloned().expect("no app icon"))
-        .tooltip("SoundCloud Desktop")
+        .tooltip("EzzCloud")
         .menu(&menu)
         .on_menu_event(|app, event| {
             let id = event.id().as_ref();

@@ -1,10 +1,10 @@
-# SoundCloud Desktop
+# EzzCloud
 
 ## Архитектура
 
-Monorepo с тремя частями:
 - **`/desktop`** — Tauri v2 + React 19 + Vite (фронтенд + нативная оболочка)
-- **`/backend`** — NestJS 11 + TypeORM + PostgreSQL (BFF-сервер)
+
+Backend, admin, landing, storage, streaming исключены — клиент использует публичный API оригинального проекта SoundCloud Desktop (`scdinternal.site`).
 
 ## Общие принципы
 
