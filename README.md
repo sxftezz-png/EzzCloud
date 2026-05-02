@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://github.com/inkerov/EzzCloud/releases/latest">
-    <img src="https://raw.githubusercontent.com/inkerov/EzzCloud/main/desktop/src-tauri/icons/icon.png" width="170" alt="EzzCloud" />
+  <a href="https://github.com/sxftezz-png/EzzCloud/releases/latest">
+    <img src="https://raw.githubusercontent.com/sxftezz-png/EzzCloud/main/desktop/src-tauri/icons/icon.png" width="170" alt="EzzCloud" />
   </a>
 </p>
 
@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/inkerov/EzzCloud/releases/latest">
+  <a href="https://github.com/sxftezz-png/EzzCloud/releases/latest">
     <img src="https://img.shields.io/badge/Скачать-Последнюю_версию-FF5500?style=for-the-badge" alt="Download"/>
   </a>
 </p>
@@ -66,7 +66,7 @@
 
 ## Скачать
 
-Релизы: https://github.com/inkerov/EzzCloud/releases/latest
+Релизы: https://github.com/sxftezz-png/EzzCloud/releases/latest
 
 ### Windows
 - `*.exe` (рекомендуется)
@@ -103,7 +103,7 @@
 ### Запуск desktop
 
 ```bash
-git clone https://github.com/inkerov/EzzCloud.git
+git clone https://github.com/sxftezz-png/EzzCloud.git
 cd EzzCloud/desktop
 pnpm install
 pnpm tauri dev

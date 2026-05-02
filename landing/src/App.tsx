@@ -17,12 +17,12 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { siApple, siDebian, siFlatpak, siGithub, siLinux, siRedhat } from 'simple-icons';
 
 /* ── Constants ── */
-const RELEASES = 'https://github.com/inkerov/EzzCloud/releases/latest';
-const GITHUB = 'https://github.com/inkerov/EzzCloud';
-const DISCUSS_FEATURE = 'https://github.com/inkerov/EzzCloud/discussions';
-const DISCUSS_BUG = 'https://github.com/inkerov/EzzCloud/discussions';
+const RELEASES = 'https://github.com/sxftezz-png/EzzCloud/releases/latest';
+const GITHUB = 'https://github.com/sxftezz-png/EzzCloud';
+const DISCUSS_FEATURE = 'https://github.com/sxftezz-png/EzzCloud/discussions';
+const DISCUSS_BUG = 'https://github.com/sxftezz-png/EzzCloud/discussions';
 const LOGO =
-  'https://raw.githubusercontent.com/inkerov/EzzCloud/main/desktop/src-tauri/icons/icon.png';
+  'https://raw.githubusercontent.com/sxftezz-png/EzzCloud/main/desktop/src-tauri/icons/icon.png';
 
 /* ── Helpers ── */
 function Si({ icon, className = '' }: { icon: { path: string }; className?: string }) {
@@ -172,7 +172,7 @@ function useDownloadCount() {
   const [count, setCount] = useState<string>('100 000+');
   useEffect(() => {
     fetch(
-      'https://raw.githubusercontent.com/inkerov/EzzCloud/main/.github/download-history.json',
+      'https://raw.githubusercontent.com/sxftezz-png/EzzCloud/main/.github/download-history.json',
     )
       .then((r) => r.json())
       .then((data: { total: number }[]) => {

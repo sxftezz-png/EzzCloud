@@ -359,7 +359,7 @@ jobs:
 
           version = os.environ['VERSION']
           release_dir = Path('/tmp/release')
-          base_url = "https://github.com/inkerov/EzzCloud/releases/latest/download"
+          base_url = "https://github.com/sxftezz-png/EzzCloud/releases/latest/download"
 
           candidates = {
               'windows-x86_64': [

@@ -19,7 +19,7 @@ services:
       retries: 5
 
   app:
-    image: ghcr.io/inkerov/ezzcloud/backend:latest
+    image: ghcr.io/sxftezz-png/ezzcloud/backend:latest
     restart: always
     ports:
       - "3000:3000"
