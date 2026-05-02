@@ -310,7 +310,7 @@ jobs:
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          manifest-path: .github/flatpak/io.github.zxcloli666.SoundcloudDesktop.yml
+          manifest-path: .github/flatpak/io.github.sxftezz-png.SoundcloudDesktop.yml
           bundle: soundcloud-desktop.flatpak
 
       - name: Upload Flatpak
@@ -400,7 +400,7 @@ jobs:
           PY
 
       - name: Publish release
-        uses: zxcloli666/release-helper@main
+        uses: sxftezz-png/release-helper@main
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ needs.version.outputs.tag }}

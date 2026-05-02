@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: AI Code Review
-        uses: zxcloli666/AI-Code-Review@main
+        uses: sxftezz-png/AI-Code-Review@main
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.AI_API_KEY }}
