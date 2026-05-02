@@ -62,5 +62,5 @@ fn main() {
     #[cfg(target_os = "linux")]
     apply_linux_gpu_workarounds();
 
-    soundcloud_desktop_lib::run()
+    ezzcloud_lib::run()
 }

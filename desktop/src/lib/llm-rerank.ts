@@ -27,7 +27,7 @@ function buildPrompt(tracks: Track[], moodHint?: string, modeHint?: string): str
   }));
 
   return [
-    'You are ranking music recommendations for a SoundCloud desktop user.',
+    'You are ranking music recommendations for an EzzCloud (SoundCloud client) user.',
     `Mode: ${modeHint || 'favorite'}.`,
     `Mood: ${moodHint || 'neutral'}.`,
     'Prioritize variety, strong artist/title quality, and mood fit. Penalize low quality "type beat" spam.',

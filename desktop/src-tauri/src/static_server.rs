@@ -176,7 +176,7 @@ pub async fn start(wallpapers_dir: PathBuf, app_handle: tauri::AppHandle) -> u16
                 emit_rpc_open_to_app(&app, &urn);
 
                 Ok(rpc_open_response(
-                    "Opened in SoundCloud Desktop",
+                    "Opened in EzzCloud",
                     "Track was sent to the desktop app. You can return to Discord now.",
                 ))
             },

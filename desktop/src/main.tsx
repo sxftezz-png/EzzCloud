@@ -212,7 +212,7 @@ async function bootstrap() {
   const root = getRoot();
   if (!root) return;
 
-  renderBootstrapScreen(root, 'SoundCloud Desktop', 'Starting app...');
+  renderBootstrapScreen(root, 'EzzCloud', 'Starting app...');
 
   let staticPort = 1420;
   let proxyPort = 1420;
@@ -225,7 +225,7 @@ async function bootstrap() {
     }
 
     if (tauriRuntime) {
-      renderBootstrapScreen(root, 'SoundCloud Desktop', 'Connecting desktop services...');
+      renderBootstrapScreen(root, 'EzzCloud', 'Connecting desktop services...');
       await Promise.all([import('./lib/scproxy'), import('./lib/discord'), import('./lib/tray')]);
       try {
         const ports = await invoke<[number, number]>('get_server_ports');

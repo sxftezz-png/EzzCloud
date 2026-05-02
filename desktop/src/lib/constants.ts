@@ -34,9 +34,9 @@ export function buildApiUrl(path: string) {
   return `${getApiBase()}${path}`;
 }
 
-export const GITHUB_OWNER = 'Teiwazik';
-export const GITHUB_REPO = 'SoundCloud-DesktopFork';
-export const GITHUB_REPO_EN = 'SoundCloud-Desktop-EN';
+export const GITHUB_OWNER = 'inkerov';
+export const GITHUB_REPO = 'EzzCloud';
+export const GITHUB_REPO_EN = 'EzzCloud-EN';
 export const APP_VERSION = __APP_VERSION__;
 
 let _staticPort: number | null = null;

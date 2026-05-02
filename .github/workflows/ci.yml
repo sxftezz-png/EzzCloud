@@ -208,7 +208,7 @@ jobs:
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          manifest-path: .github/flatpak/io.github.zxcloli666.SoundcloudDesktop.yml
+          manifest-path: .github/flatpak/io.github.inkerov.EzzCloud.yml
           bundle: soundcloud-desktop.flatpak
 
       - name: Upload Flatpak

@@ -1,8 +1,8 @@
-name: soundcloud-desktop
+name: ezzcloud
 
 services:
   db:
-    container_name: soundcloud-desktop-db
+    container_name: ezzcloud-db
     image: docker.io/library/postgres:17-alpine
     restart: always
     environment:

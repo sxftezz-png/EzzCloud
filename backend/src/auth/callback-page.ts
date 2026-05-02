@@ -13,7 +13,7 @@ export function renderCallbackPage(params: CallbackPageParams): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SoundCloud Desktop — ${success ? 'Connected' : 'Error'}</title>
+  <title>EzzCloud — ${success ? 'Connected' : 'Error'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 

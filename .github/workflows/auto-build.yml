@@ -310,7 +310,7 @@ jobs:
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          manifest-path: .github/flatpak/io.github.zxcloli666.SoundcloudDesktop.yml
+          manifest-path: .github/flatpak/io.github.inkerov.EzzCloud.yml
           bundle: soundcloud-desktop.flatpak
 
       - name: Upload Flatpak
@@ -359,17 +359,17 @@ jobs:
 
           version = os.environ['VERSION']
           release_dir = Path('/tmp/release')
-          base_url = "https://github.com/Teiwazik/SoundCloud-DesktopFork/releases/latest/download"
+          base_url = "https://github.com/inkerov/EzzCloud/releases/latest/download"
 
           candidates = {
               'windows-x86_64': [
-                  f'soundcloud-desktop_{version}_x64-setup.exe',
-                  f'soundcloud-desktop_{version}_x64_en-US.msi',
+                  f'EzzCloud_{version}_x64-setup.exe',
+                  f'EzzCloud_{version}_x64_en-US.msi',
               ],
-              'linux-x86_64': [f'soundcloud-desktop_{version}_amd64.AppImage'],
-              'linux-aarch64': [f'soundcloud-desktop_{version}_aarch64.AppImage'],
-              'darwin-x86_64': ['soundcloud-desktop_x64.app.tar.gz'],
-              'darwin-aarch64': ['soundcloud-desktop_arm64.app.tar.gz'],
+              'linux-x86_64': [f'EzzCloud_{version}_amd64.AppImage'],
+              'linux-aarch64': [f'EzzCloud_{version}_aarch64.AppImage'],
+              'darwin-x86_64': ['EzzCloud_x64.app.tar.gz'],
+              'darwin-aarch64': ['EzzCloud_arm64.app.tar.gz'],
           }
 
           platforms = {}

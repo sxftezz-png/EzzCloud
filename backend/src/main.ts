@@ -24,9 +24,9 @@ async function bootstrap() {
   app.useGlobalFilters(new SoundcloudExceptionFilter());
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('SoundCloud Desktop API')
+    .setTitle('EzzCloud API')
     .setDescription(
-      'Backend API for SoundCloud Desktop application. Proxies SoundCloud API with OAuth 2.1 + PKCE authentication.',
+      'Backend API for EzzCloud desktop application. Proxies SoundCloud API with OAuth 2.1 + PKCE authentication.',
     )
     .setVersion('1.0.0')
     .addApiKey({ type: 'apiKey', name: 'x-session-id', in: 'header' }, 'session')

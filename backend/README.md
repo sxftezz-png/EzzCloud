@@ -1,6 +1,6 @@
-# SoundCloud Desktop — Backend
+# EzzCloud — Backend
 
-BFF-сервер для десктопного приложения SoundCloud. Проксирует SoundCloud API, управляет OAuth 2.1 + PKCE авторизацией, хранит сессии в PostgreSQL.
+BFF-сервер для десктопного приложения EzzCloud. Проксирует SoundCloud API, управляет OAuth 2.1 + PKCE авторизацией, хранит сессии в PostgreSQL.
 
 ## Стек
 
@@ -131,10 +131,10 @@ pnpm build && pnpm start:prod  # production
 
 ---
 
-## 4.1. Как подключить сервер к SoundCloud Desktop
+## 4.1. Как подключить сервер к EzzCloud
 
 1. Запусти API на `http://localhost:3000`
-2. Открой SoundCloud Desktop
+2. Открой EzzCloud
 3. На экране логина выбери локальный сервер / custom API flow
 4. Если хочешь логиниться через свое приложение SoundCloud, вставь свой `Client ID` и `Client Secret`
 5. Авторизуйся как обычно

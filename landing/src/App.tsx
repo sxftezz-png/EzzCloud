@@ -17,12 +17,12 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { siApple, siDebian, siFlatpak, siGithub, siLinux, siRedhat } from 'simple-icons';
 
 /* ── Constants ── */
-const RELEASES = 'https://github.com/zxcloli666/SoundCloud-Desktop/releases/latest';
-const GITHUB = 'https://github.com/zxcloli666/SoundCloud-Desktop';
-const DISCUSS_FEATURE = 'https://github.com/zxcloli666/SoundCloud-Desktop/discussions/121';
-const DISCUSS_BUG = 'https://github.com/zxcloli666/SoundCloud-Desktop/discussions/144';
+const RELEASES = 'https://github.com/inkerov/EzzCloud/releases/latest';
+const GITHUB = 'https://github.com/inkerov/EzzCloud';
+const DISCUSS_FEATURE = 'https://github.com/inkerov/EzzCloud/discussions';
+const DISCUSS_BUG = 'https://github.com/inkerov/EzzCloud/discussions';
 const LOGO =
-  'https://raw.githubusercontent.com/zxcloli666/SoundCloud-Desktop/legacy/icons/appLogo.png';
+  'https://raw.githubusercontent.com/inkerov/EzzCloud/main/desktop/src-tauri/icons/icon.png';
 
 /* ── Helpers ── */
 function Si({ icon, className = '' }: { icon: { path: string }; className?: string }) {
@@ -92,7 +92,7 @@ function Hero() {
         <div className="mb-10 inline-block icon-ring">
           <img
             src={LOGO}
-            alt="SoundCloud Desktop"
+            alt="EzzCloud"
             width={110}
             height={110}
             className="rounded-[26px] relative z-10"
@@ -172,7 +172,7 @@ function useDownloadCount() {
   const [count, setCount] = useState<string>('100 000+');
   useEffect(() => {
     fetch(
-      'https://raw.githubusercontent.com/zxcloli666/download-history/refs/heads/main/data/zxcloli666_SoundCloud-Desktop.json',
+      'https://raw.githubusercontent.com/inkerov/EzzCloud/main/.github/download-history.json',
     )
       .then((r) => r.json())
       .then((data: { total: number }[]) => {
@@ -377,8 +377,8 @@ function Platforms() {
 function FAQ() {
   const items = [
     {
-      q: 'SoundCloud заблокирован в России — как слушать?',
-      a: 'Скачайте SoundCloud Desktop. Приложение работает в России без VPN и дополнительных программ. Весь каталог SoundCloud доступен полностью.',
+      q: 'SoundCloud недоступен — как слушать?',
+      a: 'Скачайте EzzCloud — десктопный клиент SoundCloud. Весь каталог SoundCloud доступен полностью.',
     },
     {
       q: 'Приложение бесплатное?',
@@ -458,7 +458,7 @@ function CTABanner() {
               Слушай музыку <span className="gradient-text">без ограничений</span>
             </h2>
             <p className="text-white/40 mb-8 max-w-md mx-auto">
-              100 000+ пользователей уже перешли на SoundCloud Desktop
+              Переходите на EzzCloud — клиент SoundCloud без рекламы
             </p>
             <a href={RELEASES} className="btn-primary text-lg">
               <Download size={19} strokeWidth={2.5} />
@@ -483,7 +483,7 @@ function Footer() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mb-10">
           <a href="#" className="flex items-center gap-3 no-underline text-inherit">
             <img src={LOGO} alt="" width={32} height={32} className="rounded-lg" />
-            <span className="font-semibold text-white/70 text-sm">SoundCloud Desktop</span>
+            <span className="font-semibold text-white/70 text-sm">EzzCloud</span>
           </a>
 
           <nav className="flex flex-wrap gap-6 justify-center">
@@ -517,14 +517,11 @@ function Footer() {
 
         {/* SEO hidden text */}
         <div className="sr-only" aria-hidden="true">
-          <h2>SoundCloud Desktop — скачать приложение SoundCloud для компьютера</h2>
+          <h2>EzzCloud — десктопный клиент SoundCloud для компьютера</h2>
           <p>
-            SoundCloud Desktop — лучший неофициальный десктопный клиент для SoundCloud. Скачать
-            SoundCloud на компьютер бесплатно. SoundCloud приложение для Windows, Linux и macOS.
-            SoundCloud без рекламы и без капчи. SoundCloud в России — работает без VPN. SoundCloud
-            заблокирован — альтернативный клиент. SoundCloud плеер для ПК. Музыкальный плеер
-            SoundCloud Desktop. SoundCloud desktop app download free. SoundCloud client for PC.
-            SoundCloud no ads no captcha. SoundCloud blocked Russia alternative.
+            EzzCloud — неофициальный десктопный клиент для SoundCloud. Скачать бесплатно для
+            Windows, Linux, macOS. Без рекламы и без капчи. Нативное Tauri-приложение.
+            EzzCloud SoundCloud client for PC. SoundCloud desktop app download free.
           </p>
         </div>
       </div>

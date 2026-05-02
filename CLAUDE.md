@@ -1,4 +1,4 @@
-# SoundCloud Desktop v2
+# EzzCloud v2
 
 ## Архитектура
 

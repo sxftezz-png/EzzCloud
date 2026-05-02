@@ -363,7 +363,7 @@ pub fn run() {
             #[allow(unused_mut)]
             let mut win_builder =
                 WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-                    .title("SoundCloud Desktop")
+                    .title("EzzCloud")
                     .inner_size(1200.0, 800.0)
                     .min_inner_size(800.0, 470.0)
                     .decorations(false);

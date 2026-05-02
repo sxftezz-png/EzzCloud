@@ -7,7 +7,7 @@ import {
   ScTrack,
 } from '../soundcloud/soundcloud.types.js';
 
-const LIKES_PLAYLIST_NAME = 'Лайки | SoundCloud Desktop';
+const LIKES_PLAYLIST_NAME = 'Лайки | EzzCloud';
 const LIKE_RETRY_ATTEMPTS = 3;
 const LIKE_RETRY_DELAY_MS = 500;
 const PLAYLIST_CACHE_TTL_MS = 5 * 60 * 1000;
