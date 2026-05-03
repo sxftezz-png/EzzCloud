@@ -1,5 +1,6 @@
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
+use std::time::Duration;
 
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
 use sha2::{Digest, Sha256};
@@ -186,44 +187,84 @@ pub async fn handle(encoded: &str) -> ImageResult {
     println!("[ImageCache] MISS {}", target_url);
 
     let encoded_for_header = BASE64.encode(target_url.as_bytes());
-    let mut status = 502u16;
-    let mut data: Vec<u8> = Vec::new();
 
-    for upstream in upstreams {
-        let resp = match state
-            .http_client
-            .get(upstream)
-            .header("X-Target", &encoded_for_header)
+    // Race upstream proxies and direct fetch concurrently. Whichever returns a
+    // usable (non-5xx, non-empty) response first wins. This keeps images fast
+    // when the upstream proxy is healthy AND keeps them loading when it is
+    // dead — the previous sequential design would block ~30s per image
+    // waiting for a dead upstream before falling through to direct.
+    let upstream_url = upstreams.first().cloned().unwrap_or_default();
+    let upstream_header = encoded_for_header.clone();
+    let upstream_client = state.http_client.clone();
+    let upstream_fut = async move {
+        if upstream_url.is_empty() {
+            return None;
+        }
+        let resp = upstream_client
+            .get(&upstream_url)
+            .header("X-Target", &upstream_header)
+            .timeout(Duration::from_secs(8))
             .send()
             .await
-        {
-            Ok(r) => r,
-            Err(_) => continue,
-        };
-
-        status = resp.status().as_u16();
-        match resp.bytes().await {
-            Ok(b) => data = b.to_vec(),
-            Err(_) => continue,
+            .ok()?;
+        let status = resp.status().as_u16();
+        if status >= 500 {
+            return None;
         }
-
-        if status < 500 {
-            break;
+        let bytes = resp.bytes().await.ok()?;
+        if bytes.is_empty() {
+            return None;
         }
-    }
+        Some((status, bytes.to_vec()))
+    };
 
-    // Fallback: if all upstream proxies fail, try fetching the target URL
-    // directly. Mirrors the same behaviour as `proxy::proxy_request` so that
-    // images keep loading even when the SC proxy hosts are unreachable.
-    if status >= 500 || data.is_empty() {
-        if let Ok(resp) = state.http_client.get(&target_url).send().await {
-            let direct_status = resp.status().as_u16();
-            if let Ok(bytes) = resp.bytes().await {
-                if direct_status < 500 && !bytes.is_empty() {
-                    status = direct_status;
-                    data = bytes.to_vec();
+    let direct_target = target_url.clone();
+    let direct_client = state.http_client.clone();
+    let direct_fut = async move {
+        let resp = direct_client
+            .get(&direct_target)
+            .timeout(Duration::from_secs(12))
+            .send()
+            .await
+            .ok()?;
+        let status = resp.status().as_u16();
+        if status >= 500 {
+            return None;
+        }
+        let bytes = resp.bytes().await.ok()?;
+        if bytes.is_empty() {
+            return None;
+        }
+        Some((status, bytes.to_vec()))
+    };
+
+    tokio::pin!(upstream_fut);
+    tokio::pin!(direct_fut);
+
+    let mut status = 502u16;
+    let mut data: Vec<u8> = Vec::new();
+    let mut upstream_done = false;
+    let mut direct_done = false;
+
+    loop {
+        tokio::select! {
+            r = &mut upstream_fut, if !upstream_done => {
+                upstream_done = true;
+                if let Some((s, b)) = r {
+                    status = s;
+                    data = b;
+                    break;
                 }
             }
+            r = &mut direct_fut, if !direct_done => {
+                direct_done = true;
+                if let Some((s, b)) = r {
+                    status = s;
+                    data = b;
+                    break;
+                }
+            }
+            else => break,
         }
     }
 
