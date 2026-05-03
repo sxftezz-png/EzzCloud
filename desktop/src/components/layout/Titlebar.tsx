@@ -46,7 +46,7 @@ export const Titlebar = React.memo(() => {
         <div className="flex items-center gap-1.5 min-w-0" data-tauri-drag-region>
           <Disc3 size={14} className="text-accent" strokeWidth={2} />
           <span className="text-[11px] font-semibold tracking-tight text-white/30">
-            SoundCloud
+            EzzCloud
           </span>
         </div>
         <NavButtons />

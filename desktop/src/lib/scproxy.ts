@@ -39,7 +39,7 @@ function scproxyUrl(url: string): string {
 // base64-wrapped. The cache key is the original URL; the upstream is the same
 // scdinternal proxy used elsewhere (handles auth/headers for SC CDN).
 function scproxyImageUrl(url: string): string {
-  const payload = JSON.stringify([url, 'https://proxy.scdinternal.site']);
+  const payload = JSON.stringify([url, 'https://images.scdinternal.site']);
   const encoded = btoa(payload);
   const proxyPort = getProxyPort();
   if (IS_WINDOWS && proxyPort) {
@@ -75,7 +75,7 @@ document.addEventListener(
     if (e.target instanceof HTMLImageElement) {
       const img = e.target as ProxyImage;
       const current = img.currentSrc || img.src;
-      if (!img.__origRetryDone && img.__origSrc && (current.includes('scproxy.localhost') || current.startsWith('scproxy://'))) {
+      if (!img.__origRetryDone && img.__origSrc && (current.includes('scproxy.localhost') || current.startsWith('scproxy://') || current.includes('127.0.0.1'))) {
         img.__origRetryDone = true;
         img.style.display = '';
         imgSrcDesc.set!.call(img, img.__origSrc);

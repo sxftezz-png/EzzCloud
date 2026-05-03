@@ -212,6 +212,21 @@ pub async fn handle(encoded: &str) -> ImageResult {
         }
     }
 
+    // Fallback: if all upstream proxies fail, try fetching the target URL
+    // directly. Mirrors the same behaviour as `proxy::proxy_request` so that
+    // images keep loading even when the SC proxy hosts are unreachable.
+    if status >= 500 || data.is_empty() {
+        if let Ok(resp) = state.http_client.get(&target_url).send().await {
+            let direct_status = resp.status().as_u16();
+            if let Ok(bytes) = resp.bytes().await {
+                if direct_status < 500 && !bytes.is_empty() {
+                    status = direct_status;
+                    data = bytes.to_vec();
+                }
+            }
+        }
+    }
+
     let content_type = if status == 200 && !data.is_empty() {
         sniff_content_type(&data).to_string()
     } else {
