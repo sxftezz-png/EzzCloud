@@ -432,7 +432,7 @@ const DEFAULTS = {
   pinnedPlaylists: [] as SidebarPinnedPlaylist[],
   floatingComments: true,
   discordRpc: true,
-  discordRpcMode: 'text' as DiscordRpcMode,
+  discordRpcMode: 'track' as DiscordRpcMode,
   discordRpcShowButton: true,
   discordRpcButtonMode: 'soundcloud' as DiscordRpcButtonMode,
   qdrantEnabled: ENV_QDRANT_ENABLED,

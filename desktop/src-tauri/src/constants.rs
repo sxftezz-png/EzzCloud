@@ -1,4 +1,4 @@
-pub const DISCORD_CLIENT_ID: &str = "1431978756687265872";
+pub const DISCORD_CLIENT_ID: &str = "1477350440181170348";
 
 // `proxy.scdinternal.site` (the host upstream uses by default) does NOT resolve
 // in DNS as of this build, so every proxied request would burn ~1.5s on retries
