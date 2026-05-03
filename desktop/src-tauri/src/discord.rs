@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use discord_rich_presence::{
-    activity::{Activity, ActivityType, Assets, Button, Timestamps},
+    activity::{Activity, ActivityType, Assets, Button, StatusDisplayType, Timestamps},
     DiscordIpc, DiscordIpcClient,
 };
 
@@ -114,6 +114,7 @@ pub fn discord_set_activity(
 
     let mut activity = Activity::new()
         .activity_type(ActivityType::Listening)
+        .status_display_type(StatusDisplayType::Details)
         .assets(assets);
 
     activity = match mode {
