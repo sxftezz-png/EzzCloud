@@ -11,6 +11,7 @@ const WHITELIST = [
   'stream.scdinternal.site',
   'stream-premium.scdinternal.site',
   'storage.scdinternal.site',
+  'ezzcloud.mooo.com',
   'unpkg.com',
 ];
 const IS_WINDOWS = navigator.userAgent.includes('Windows');

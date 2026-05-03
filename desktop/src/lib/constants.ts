@@ -1,6 +1,6 @@
 import { useSettingsStore } from '../stores/settings';
 
-export const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.scdinternal.site';
+export const API_BASE = import.meta.env.VITE_API_BASE || 'https://ezzcloud.mooo.com:9443';
 export const STREAMING_BASE = import.meta.env.VITE_STREAMING_BASE || 'https://stream.scdinternal.site';
 export const STREAMING_PREMIUM_BASE =
   import.meta.env.VITE_STREAMING_PREMIUM_BASE || 'https://stream-premium.scdinternal.site';

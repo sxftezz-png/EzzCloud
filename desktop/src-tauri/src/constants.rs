@@ -20,6 +20,7 @@ pub const DOMAIN_WHITELIST: &[&str] = &[
     "stream.scdinternal.site",
     "stream-premium.scdinternal.site",
     "storage.scdinternal.site",
+    "ezzcloud.mooo.com",
 ];
 
 pub fn is_domain_whitelisted(host: &str) -> bool {
