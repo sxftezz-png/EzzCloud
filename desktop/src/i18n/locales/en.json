@@ -70,9 +70,9 @@
     "copied": "Copied!",
     "restoringSession": "Restoring session",
     "startingApp": "Starting app...",
-    "soundwaveLinking": "Connecting SoundWave for personalized recommendations…",
-    "soundwaveLinked": "SoundWave connected — recommendations are now personalized",
-    "soundwaveLinkFailed": "Couldn't connect SoundWave — recommendations may be unavailable",
+    "soundwaveLinking": "Setting up personalized recommendations…",
+    "soundwaveLinked": "Recommendations are now personalized",
+    "soundwaveLinkFailed": "Couldn't set up personalized recommendations",
     "soundwaveSkip": "Skip"
   },
   "search": {
@@ -116,7 +116,7 @@
     "moodCorrection": "Correct mood",
     "moodChoose": "Choose the correct mood",
     "moodConfirmPrompt": "Are you sure about \"{{mood}}\"?",
-    "moodConfirmHint": "This will train SoundWave recommendations.",
+    "moodConfirmHint": "This will train your recommendations.",
     "moodConfirmYes": "Yes, apply",
     "moodConfirmNo": "Cancel",
     "moodEnergetic": "Energetic",

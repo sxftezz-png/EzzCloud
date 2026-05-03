@@ -70,9 +70,9 @@
     "copied": "Скопировано!",
     "restoringSession": "Восстановление сессии",
     "startingApp": "Запуск приложения...",
-    "soundwaveLinking": "Подключаем SoundWave для персональных рекомендаций…",
-    "soundwaveLinked": "SoundWave подключён — рекомендации теперь по вкусам",
-    "soundwaveLinkFailed": "Не удалось подключить SoundWave — рекомендации могут быть недоступны",
+    "soundwaveLinking": "Настраиваем персональные рекомендации…",
+    "soundwaveLinked": "Рекомендации теперь по вкусам",
+    "soundwaveLinkFailed": "Не удалось настроить персональные рекомендации",
     "soundwaveSkip": "Пропустить"
   },
   "search": {
@@ -116,7 +116,7 @@
     "moodCorrection": "Скорректировать настроение",
     "moodChoose": "Выберите правильное настроение",
     "moodConfirmPrompt": "Вы уверены в выборе «{{mood}}»?",
-    "moodConfirmHint": "Это отправит корректировку для обучения SoundWave.",
+    "moodConfirmHint": "Это отправит корректировку для обучения рекомендаций.",
     "moodConfirmYes": "Да, отправить",
     "moodConfirmNo": "Отмена",
     "moodEnergetic": "Бодрое",
