@@ -20,7 +20,6 @@ import { useAppStatusStore } from '../../stores/app-status';
 import { useAuthStore } from '../../stores/auth';
 import { useSettingsStore } from '../../stores/settings';
 import { Avatar } from '../ui/Avatar';
-import { StarBadge, StarCard, StarModal, useStarSubscription } from './StarSubscription';
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -38,7 +37,6 @@ const navItems = [
 export const Sidebar = React.memo(() => {
   const { t, i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const appMode = useAppStatusStore((s) =>
     s.soundcloudBlocked
       ? 'blocked'
@@ -53,7 +51,6 @@ export const Sidebar = React.memo(() => {
       toggleSidebar: s.toggleSidebar,
     })),
   );
-  const { isPremium, modalOpen, setModalOpen, openModal } = useStarSubscription();
 
   const toggleLanguage = () => {
     const next = i18n.language === 'ru' ? 'en' : 'ru';
@@ -156,9 +153,6 @@ export const Sidebar = React.memo(() => {
       <div className="flex-1" />
 
       <div className="px-2 pb-1 flex flex-col gap-0.5">
-        {isAuthenticated && (
-          <StarCard collapsed={collapsed} isPremium={isPremium} onOpenModal={openModal} />
-        )}
         {/* Toggle sidebar */}
         <button
           type="button"
@@ -221,13 +215,11 @@ export const Sidebar = React.memo(() => {
                 <span className="text-[12px] text-white/40 truncate font-medium">
                   {user.username}
                 </span>
-                {isPremium && <StarBadge />}
               </div>
             )}
           </NavLink>
         </div>
       )}
-      <StarModal open={modalOpen} onOpenChange={setModalOpen} />
     </aside>
   );
 });

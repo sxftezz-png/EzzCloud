@@ -6,7 +6,6 @@ import { Toaster } from 'sonner';
 import { useShallow } from 'zustand/shallow';
 import { AppShell } from './components/layout/AppShell';
 import { ThemeProvider } from './components/ThemeProvider';
-import { UpdateChecker } from './components/UpdateChecker';
 import { ApiError, setSessionExpiredHandler, setUnauthorizedHandler } from './lib/api';
 import { applyAppFont } from './lib/app-font';
 import { hasAuthHydrated } from './lib/auth-hydration';
@@ -240,7 +239,7 @@ function AppInner() {
             <div className="h-4 w-4 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
           </div>
         )}
-        {appMode === 'online' && isAuthenticated && <UpdateChecker />}
+        {/* UpdateChecker disabled in EzzCloud build */}
 
         {showOfflineShell ? (
           <Routes>

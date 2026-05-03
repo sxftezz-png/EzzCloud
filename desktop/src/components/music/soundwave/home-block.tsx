@@ -166,7 +166,7 @@ export const SoundWaveBlock = React.memo(function SoundWaveBlock() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="soundwave-title text-[20px] font-bold tracking-tight leading-none">
-                  SoundWave
+                  EzzWave
                 </h2>
                 <span
                   className="relative overflow-hidden inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.12em] px-2 py-[3px] rounded-full text-white/90"

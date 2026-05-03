@@ -698,7 +698,7 @@ export const SoundWaveHero: React.FC = () => {
           }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-bold tracking-wide text-white/90 drop-shadow-md max-[760px]:text-lg max-[560px]:flex-wrap max-[560px]:justify-center max-[560px]:text-center max-[560px]:text-[17px]">
-            {isActive ? `Волна: ${currentPreset?.name}` : 'СаундВолна'}
+            {isActive ? `Волна: ${currentPreset?.name}` : 'EzzWave'}
             {isSuspended && (
               <span className="theme-accent-chip theme-accent-animated rounded-full border px-2 py-0.5 text-[10px] font-semibold text-white/80">
                 {t('settings.languageWaveCaching')}
