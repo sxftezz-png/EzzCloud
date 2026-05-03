@@ -136,7 +136,7 @@ interface PlaylistListResponse {
 type PageParam = Record<string, string>;
 
 const INFINITE_MAX_PAGES = 8;
-const SEARCH_MAX_PAGES = 5;
+const SEARCH_MAX_PAGES = 20;
 const PLAYLIST_TRACKS_MAX_PAGES = 12;
 
 /* ── Helpers ───────────────────────────────────────────────────── */

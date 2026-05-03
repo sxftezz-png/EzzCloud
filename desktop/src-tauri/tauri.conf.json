@@ -48,7 +48,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJDOTZBNzhEQjFENjMxQTcKUldTbk1kYXhqYWVXTEpGbWdmY3J1NjBNTmFaUWo0UDdYcGxNQk05Wm5mTXZ0WktlQmYyNkllbjIK",
       "endpoints": [
-        "https://github.com/Teiwazik/SoundCloud-DesktopFork/releases/latest/download/latest.json"
+        "https://github.com/sxftezz-png/EzzCloud/releases/latest/download/latest.json"
       ],
       "windows": {
         "installMode": "passive"

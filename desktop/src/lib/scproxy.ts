@@ -6,7 +6,7 @@ const WHITELIST = [
   '127.0.0.1',
   'tauri.localhost',
   'scproxy.localhost',
-  'proxy.scdinternal.site',
+  'images.scdinternal.site',
   'api.scdinternal.site',
   'stream.scdinternal.site',
   'stream-premium.scdinternal.site',

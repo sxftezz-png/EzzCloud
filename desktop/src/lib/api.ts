@@ -184,7 +184,9 @@ export async function api<T = unknown>(path: string, options: ApiRequestOptions 
     const shouldSurfaceUnauthorized = res.status !== 401 || handleUnauthorized();
     if (!quietHttpErrors) {
       if (res.status >= 500) {
-        toast.error(`Server error (${res.status})`);
+        // Backend 5xx noise — usually transient. Don't spam the user with a
+        // toast on every flaky request; the failed query itself surfaces an
+        // empty/skeleton state, which is enough signal.
       } else if (res.status === 401 && shouldSurfaceUnauthorized) {
         showSessionExpiredToast();
       } else if (res.status === 429) {

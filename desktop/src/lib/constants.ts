@@ -36,7 +36,7 @@ export function buildApiUrl(path: string) {
 
 export const GITHUB_OWNER = 'sxftezz-png';
 export const GITHUB_REPO = 'EzzCloud';
-export const GITHUB_REPO_EN = 'SoundCloud-Desktop-EN';
+export const GITHUB_REPO_EN = 'EzzCloud';
 export const APP_VERSION = __APP_VERSION__;
 
 let _staticPort: number | null = null;

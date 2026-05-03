@@ -23,7 +23,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // went through high-quality LANCZOS at build time.
     TrayIconBuilder::with_id("main")
         .icon(tauri::include_image!("icons/variants/default-tray.png"))
-        .tooltip("SoundCloud Desktop")
+        .tooltip("EzzCloud")
         .menu(&menu)
         .on_menu_event(|app, event| {
             let id = event.id().as_ref();
