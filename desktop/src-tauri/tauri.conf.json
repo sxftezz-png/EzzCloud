@@ -56,7 +56,9 @@
         "displayLanguageSelector": true,
         "compression": "lzma"
       }
-    }
+    },
+    "publisher": "Inkerov",
+    "copyright": "\u00a9 Inkerov"
   },
   "plugins": {
     "updater": {
