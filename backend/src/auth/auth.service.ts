@@ -15,6 +15,8 @@ import { type OAuthCredentials, SoundcloudService } from '../soundcloud/soundclo
 import { ScMe } from '../soundcloud/soundcloud.types.js';
 import { Session } from './entities/session.entity.js';
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -52,7 +54,9 @@ export class AuthService {
 
     const values = [creds.clientId, creds.clientSecret, creds.redirectUri];
     return values.every((value) => {
-      const normalized = String(value ?? '').trim().toLowerCase();
+      const normalized = String(value ?? '')
+        .trim()
+        .toLowerCase();
       return normalized !== '' && normalized !== 'undefined' && normalized !== 'null';
     });
   }
@@ -61,7 +65,7 @@ export class AuthService {
     return this.customCredentials.get(key);
   }
 
-  async initiateLogin(): Promise<{ url: string; sessionId: string }> {
+  async initiateLogin(): Promise<{ url: string; sessionId: string; loginRequestId: string }> {
     const codeVerifier = randomBytes(32).toString('base64url');
     const codeChallenge = createHash('sha256').update(codeVerifier).digest('base64url');
     const state = randomBytes(16).toString('hex');
@@ -124,7 +128,31 @@ export class AuthService {
     return {
       url: `${authBaseUrl}/authorize?${params.toString()}`,
       sessionId: session.id,
+      loginRequestId: session.id,
     };
+  }
+
+  async getLoginStatus(loginRequestId: string): Promise<{
+    status: 'pending' | 'completed' | 'failed' | 'expired';
+    sessionId?: string;
+    username?: string;
+    error?: string;
+  }> {
+    if (!UUID_REGEX.test(loginRequestId)) {
+      return { status: 'failed', error: 'Invalid login request id' };
+    }
+    const session = await this.sessionRepo.findOne({ where: { id: loginRequestId } });
+    if (!session) {
+      return { status: 'failed', error: 'Login request not found' };
+    }
+    if (session.accessToken) {
+      return {
+        status: 'completed',
+        sessionId: session.id,
+        username: session.username ?? undefined,
+      };
+    }
+    return { status: 'pending' };
   }
 
   async handleCallback(

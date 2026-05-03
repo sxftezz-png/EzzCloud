@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, type DataSourceOptions } from 'typeorm';
 import { AuthModule } from './auth/auth.module.js';
 import { Session } from './auth/entities/session.entity.js';
 import configuration from './config/configuration.js';
@@ -18,9 +19,9 @@ import { PlaylistsModule } from './playlists/playlists.module.js';
 import { RepostsModule } from './reposts/reposts.module.js';
 import { ResolveModule } from './resolve/resolve.module.js';
 import { SoundcloudModule } from './soundcloud/soundcloud.module.js';
+import { TeiwazikModule } from './teiwazik/teiwazik.module.js';
 import { TracksModule } from './tracks/tracks.module.js';
 import { UsersModule } from './users/users.module.js';
-import { DataSource, type DataSourceOptions } from 'typeorm';
 
 const DATABASE_ENTITIES = [Session, ListeningHistory, LocalLike, OAuthApp];
 
@@ -129,6 +130,7 @@ function createDatabaseOptions(config: ConfigService): DataSourceOptions {
     ResolveModule,
     HistoryModule,
     LocalLikesModule,
+    TeiwazikModule,
   ],
   controllers: [HealthController],
 })

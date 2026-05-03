@@ -47,6 +47,9 @@ export class Session {
   @Column({ nullable: true })
   oauthAppId: string;
 
+  @Column({ nullable: true })
+  teiwazikSessionId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

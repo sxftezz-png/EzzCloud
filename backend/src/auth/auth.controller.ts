@@ -1,9 +1,17 @@
-import { Controller, Get, Header, Headers, HttpCode, Post, Query, Body } from '@nestjs/common';
-import { ApiHeader, ApiOkResponse, ApiOperation, ApiQuery, ApiTags, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Get, Header, Headers, HttpCode, Post, Query } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service.js';
 import { renderCallbackPage } from './callback-page.js';
 import {
   LoginResponseDto,
+  LoginStatusResponseDto,
   LogoutResponseDto,
   RefreshResponseDto,
   SessionResponseDto,
@@ -48,6 +56,14 @@ export class AuthController {
   @ApiOkResponse({ type: LoginResponseDto })
   async login() {
     return this.authService.initiateLogin();
+  }
+
+  @Get('login/status')
+  @ApiOperation({ summary: 'Poll status of a pending OAuth login (waiting for user in browser)' })
+  @ApiQuery({ name: 'id', required: true, description: 'loginRequestId returned from /auth/login' })
+  @ApiOkResponse({ type: LoginStatusResponseDto })
+  async loginStatus(@Query('id') id: string): Promise<LoginStatusResponseDto> {
+    return this.authService.getLoginStatus(id);
   }
 
   @Get('callback')

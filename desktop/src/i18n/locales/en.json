@@ -69,7 +69,11 @@
     "copyLink": "Copy link",
     "copied": "Copied!",
     "restoringSession": "Restoring session",
-    "startingApp": "Starting app..."
+    "startingApp": "Starting app...",
+    "soundwaveLinking": "Connecting SoundWave for personalized recommendations…",
+    "soundwaveLinked": "SoundWave connected — recommendations are now personalized",
+    "soundwaveLinkFailed": "Couldn't connect SoundWave — recommendations may be unavailable",
+    "soundwaveSkip": "Skip"
   },
   "search": {
     "placeholder": "Search tracks, playlists, users...",

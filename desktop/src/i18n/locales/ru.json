@@ -69,7 +69,11 @@
     "copyLink": "Скопировать ссылку",
     "copied": "Скопировано!",
     "restoringSession": "Восстановление сессии",
-    "startingApp": "Запуск приложения..."
+    "startingApp": "Запуск приложения...",
+    "soundwaveLinking": "Подключаем SoundWave для персональных рекомендаций…",
+    "soundwaveLinked": "SoundWave подключён — рекомендации теперь по вкусам",
+    "soundwaveLinkFailed": "Не удалось подключить SoundWave — рекомендации могут быть недоступны",
+    "soundwaveSkip": "Пропустить"
   },
   "search": {
     "placeholder": "Треки, плейлисты, пользователи...",

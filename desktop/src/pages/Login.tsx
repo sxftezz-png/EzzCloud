@@ -1,11 +1,13 @@
-import { openUrl } from '@tauri-apps/plugin-opener';
 import { isTauri } from '@tauri-apps/api/core';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { QrLinkSheet } from '../components/auth/QrLinkSheet';
 import { api } from '../lib/api';
-import { DEFAULT_API_BASE, LOCAL_API_BASE, getApiBase } from '../lib/constants';
+import { DEFAULT_API_BASE, getApiBase, LOCAL_API_BASE } from '../lib/constants';
 import { Check, ClipboardCopy, Disc3, Smartphone } from '../lib/icons';
+import { linkTeiwazik } from '../lib/teiwazik-link';
 import { queryClient } from '../main';
 import { useAuthStore } from '../stores/auth';
 import { useSettingsStore } from '../stores/settings';
@@ -90,6 +92,7 @@ export function Login({ autoStartRequestId = null }: LoginProps) {
             setSession(data.sessionId);
             await fetchUser();
             queryClient.invalidateQueries();
+            void runTeiwazikLink(t);
             return;
           }
           if (data.status === 'failed' || data.status === 'expired') {
@@ -209,7 +212,9 @@ export function Login({ autoStartRequestId = null }: LoginProps) {
                 <p className="text-[11px] text-green-400/70">Custom credentials configured</p>
               )}
               {!hasCredentials && (
-                <p className="text-[11px] text-red-300/80">Client ID and Client Secret are required</p>
+                <p className="text-[11px] text-red-300/80">
+                  Client ID and Client Secret are required
+                </p>
               )}
             </div>
           ) : null}
@@ -264,7 +269,30 @@ export function Login({ autoStartRequestId = null }: LoginProps) {
         )}
       </form>
 
-      <QrLinkSheet open={qrOpen} onOpenChange={setQrOpen} mode="pull" onSuccess={onQrLoginSuccess} />
+      <QrLinkSheet
+        open={qrOpen}
+        onOpenChange={setQrOpen}
+        mode="pull"
+        onSuccess={onQrLoginSuccess}
+      />
     </div>
   );
+}
+
+async function runTeiwazikLink(t: (k: string) => string) {
+  const linkingToastId = toast.loading(t('auth.soundwaveLinking'));
+  try {
+    const result = await linkTeiwazik();
+    if (result === 'linked') {
+      toast.success(t('auth.soundwaveLinked'), { id: linkingToastId });
+      queryClient.invalidateQueries({ queryKey: ['soundwave'] });
+      queryClient.invalidateQueries({ queryKey: ['indexing'] });
+    } else if (result === 'aborted') {
+      toast.dismiss(linkingToastId);
+    } else {
+      toast.error(t('auth.soundwaveLinkFailed'), { id: linkingToastId });
+    }
+  } catch {
+    toast.error(t('auth.soundwaveLinkFailed'), { id: linkingToastId });
+  }
 }
