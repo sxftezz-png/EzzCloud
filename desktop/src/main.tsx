@@ -57,14 +57,19 @@ if (import.meta.env.DEV && import.meta.env.VITE_REACT_SCAN === '1') {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 2,
+      // Treat data as fresh for 10 min — upstream BFF can be flaky and we'd
+      // rather show slightly-stale data than punish the user with skeletons
+      // every time the backend hiccups.
+      staleTime: 1000 * 60 * 10,
+      // Keep cached data around for an hour after a query is unobserved so
+      // tab switches / re-mounts don't trigger a refetch storm.
+      gcTime: 1000 * 60 * 60,
       retry: (failureCount, error) => {
         if (error instanceof ApiError) {
           if (error.status === 429) return false;
           if (error.status >= 400 && error.status < 500) return false;
         }
-        return failureCount < 1;
+        return failureCount < 3;
       },
       retryDelay: (attempt, error) => {
         if (error instanceof ApiError && error.retryAfterMs) {
