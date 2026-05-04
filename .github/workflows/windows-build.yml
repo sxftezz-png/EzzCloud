@@ -58,6 +58,38 @@ jobs:
           Copy-Item $exe.FullName "$dest/EzzCloud-portable.exe"
           Get-ChildItem $dest
 
+      # ── Premium custom installer (Tauri-based bootstrapper) ──
+      - name: Stage payload for premium installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path desktop-installer/src-tauri/payload | Out-Null
+          Copy-Item desktop/src-tauri/target/release/bundle/portable/EzzCloud-portable.exe desktop-installer/src-tauri/payload/EzzCloud.exe -Force
+          Get-ChildItem desktop-installer/src-tauri/payload
+
+      - name: Install installer frontend deps
+        working-directory: desktop-installer
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Rust cache (installer)
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop-installer/src-tauri -> target
+          key: windows-amd64-installer
+
+      - name: Build premium installer
+        working-directory: desktop-installer
+        run: pnpm tauri build --bundles nsis
+
+      - name: Stage premium installer output
+        shell: pwsh
+        run: |
+          $src = Get-ChildItem -Path "desktop-installer/src-tauri/target/release/bundle/nsis/*.exe" -File | Select-Object -First 1
+          if (-not $src) { throw "No premium installer .exe produced" }
+          $dest = "desktop/src-tauri/target/release/bundle/premium"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item $src.FullName "$dest/EzzCloud-Setup.exe"
+          Get-ChildItem $dest
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -66,4 +98,5 @@ jobs:
             desktop/src-tauri/target/release/bundle/nsis/*.exe
             desktop/src-tauri/target/release/bundle/msi/*.msi
             desktop/src-tauri/target/release/bundle/portable/*.exe
+            desktop/src-tauri/target/release/bundle/premium/*.exe
           retention-days: 90

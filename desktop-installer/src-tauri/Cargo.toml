@@ -1,0 +1,32 @@
+[package]
+name = "ezzcloud-installer"
+version = "7.0.0"
+description = "EzzCloud installer"
+authors = ["Inkerov"]
+edition = "2021"
+
+[lib]
+name = "ezzcloud_installer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["image-png", "image-ico"] }
+# Note: transparent window. On Windows we get DWM rounded corners + acrylic
+# automatically via the `decorations: false` + `transparent: true` combo.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "io-util", "fs"] }
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.55"
+mslnk = "0.1.8"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
