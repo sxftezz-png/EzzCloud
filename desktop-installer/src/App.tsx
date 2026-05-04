@@ -1,5 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
@@ -71,7 +77,6 @@ export default function App() {
     try {
       await invoke("quit");
     } catch {
-      /* fallback: close window the cheap way */
       window.close();
     }
   };
@@ -82,6 +87,21 @@ export default function App() {
       const t = setTimeout(() => launch(), 1500);
       return () => clearTimeout(t);
     }
+  }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keyboard shortcuts: Enter = primary action, Esc = close.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        if (mode === "idle") startInstall();
+        else if (mode === "done") launch();
+        else if (mode === "error") startInstall();
+      } else if (e.key === "Escape") {
+        if (mode === "idle" || mode === "done" || mode === "error") close();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -99,25 +119,40 @@ export default function App() {
               exit={{ opacity: 0, y: -12 }}
               transition={SPRING}
             >
-              <Logo pulse />
-              <h1 className="title">EzzCloud</h1>
-              <div className="title-sub">
+              <Logo pulse withRings />
+              <AnimatedTitle text="EzzCloud" />
+              <motion.div
+                className="title-sub"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
                 Версия {APP_VERSION} · by <b>@inkerov</b>
-              </div>
-              <p className="subtitle">
+              </motion.div>
+              <motion.p
+                className="subtitle"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
                 Минималистичный установщик · клик — и готово
-              </p>
-              <div className="cta-row">
-                <button
-                  className="cta ghost"
+              </motion.p>
+              <motion.div
+                className="cta-row"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.85, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <MagneticButton
+                  variant="ghost"
                   onClick={() => setShowSettings((v) => !v)}
                 >
                   Параметры
-                </button>
-                <button className="cta" onClick={startInstall}>
+                </MagneticButton>
+                <MagneticButton variant="primary" onClick={startInstall} shimmer>
                   Установить
-                </button>
-              </div>
+                </MagneticButton>
+              </motion.div>
 
               <AnimatePresence>
                 {showSettings && (
@@ -129,11 +164,11 @@ export default function App() {
                     transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                     style={{ overflow: "hidden" }}
                   >
-                    <div className="opt">
-                      <div>
-                        Ярлык на рабочем столе
-                        <small>Создать иконку EzzCloud на рабочем столе</small>
-                      </div>
+                    <SettingRow
+                      delay={0.05}
+                      title="Ярлык на рабочем столе"
+                      subtitle="Создать иконку EzzCloud на рабочем столе"
+                    >
                       <input
                         className="toggle"
                         type="checkbox"
@@ -142,30 +177,40 @@ export default function App() {
                           setCreateDesktopShortcut(e.target.checked)
                         }
                       />
-                    </div>
-                    <div className="opt">
-                      <div>
-                        Запустить после установки
-                        <small>Открыть EzzCloud сразу как закончим</small>
-                      </div>
+                    </SettingRow>
+                    <SettingRow
+                      delay={0.12}
+                      title="Запустить после установки"
+                      subtitle="Открыть EzzCloud сразу как закончим"
+                    >
                       <input
                         className="toggle"
                         type="checkbox"
                         checked={launchAfter}
                         onChange={(e) => setLaunchAfter(e.target.checked)}
                       />
-                    </div>
-                    <div className="opt" style={{ alignItems: "flex-start" }}>
-                      <div style={{ flex: 1 }}>
-                        Папка установки
-                        <div className="path">
+                    </SettingRow>
+                    <SettingRow
+                      delay={0.19}
+                      title="Папка установки"
+                      subtitle={
+                        <span className="path">
                           %LOCALAPPDATA%\Programs\EzzCloud
-                        </div>
-                      </div>
-                    </div>
+                        </span>
+                      }
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              <motion.div
+                className="hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.1, duration: 0.6 }}
+              >
+                <kbd>Enter</kbd> — установить · <kbd>Esc</kbd> — закрыть
+              </motion.div>
             </motion.div>
           )}
 
@@ -277,12 +322,12 @@ export default function App() {
                 EzzCloud установлен и готов к запуску
               </div>
               <div className="cta-row">
-                <button className="cta ghost" onClick={close}>
+                <MagneticButton variant="ghost" onClick={close}>
                   Закрыть
-                </button>
-                <button className="cta" onClick={launch}>
+                </MagneticButton>
+                <MagneticButton variant="primary" onClick={launch} shimmer>
                   Запустить
-                </button>
+                </MagneticButton>
               </div>
             </motion.div>
           )}
@@ -300,12 +345,12 @@ export default function App() {
               <h1 className="title">Не удалось установить</h1>
               <p className="error">{error ?? "Неизвестная ошибка"}</p>
               <div className="cta-row">
-                <button className="cta ghost" onClick={close}>
+                <MagneticButton variant="ghost" onClick={close}>
                   Закрыть
-                </button>
-                <button className="cta" onClick={startInstall}>
+                </MagneticButton>
+                <MagneticButton variant="primary" onClick={startInstall}>
                   Повторить
-                </button>
+                </MagneticButton>
               </div>
             </motion.div>
           )}
@@ -319,16 +364,131 @@ export default function App() {
   );
 }
 
+/* ──────────────────────────────────────────────────────────
+   Animated Title — letters fade-in one by one
+   ────────────────────────────────────────────────────────── */
+
+function AnimatedTitle({ text }: { text: string }) {
+  return (
+    <h1 className="title" aria-label={text}>
+      {Array.from(text).map((ch, i) => (
+        <motion.span
+          key={i}
+          aria-hidden="true"
+          style={{ display: "inline-block" }}
+          initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{
+            delay: 0.18 + i * 0.045,
+            duration: 0.55,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+          {ch}
+        </motion.span>
+      ))}
+    </h1>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   Magnetic Button — cursor-tracking translate + shimmer
+   ────────────────────────────────────────────────────────── */
+
+function MagneticButton({
+  children,
+  onClick,
+  variant,
+  shimmer,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant: "primary" | "ghost";
+  shimmer?: boolean;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const x = useSpring(useMotionValue(0), { stiffness: 220, damping: 18 });
+  const y = useSpring(useMotionValue(0), { stiffness: 220, damping: 18 });
+
+  const onMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    x.set(dx * 0.18);
+    y.set(dy * 0.28);
+  };
+  const onLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.button
+      ref={ref}
+      style={{ x, y }}
+      className={`cta ${variant === "ghost" ? "ghost" : ""} ${shimmer ? "shimmer" : ""}`}
+      onClick={onClick}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      whileTap={{ scale: 0.96 }}
+    >
+      {shimmer && <span className="shimmer-overlay" aria-hidden="true" />}
+      <span className="cta-label">{children}</span>
+    </motion.button>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   Setting Row — staggered slide-in inside settings panel
+   ────────────────────────────────────────────────────────── */
+
+function SettingRow({
+  title,
+  subtitle,
+  children,
+  delay = 0,
+}: {
+  title: string;
+  subtitle: React.ReactNode;
+  children?: React.ReactNode;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      className="opt"
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div>
+        {title}
+        <small>{subtitle}</small>
+      </div>
+      {children}
+    </motion.div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   Telegram FAB — monochrome circular icon
+   ────────────────────────────────────────────────────────── */
+
 function TelegramButton() {
   const open = () => {
     invoke("open_url", { url: "https://t.me/inkerow" }).catch(() => {});
   };
   return (
-    <button
+    <motion.button
       className="tg-fab"
       onClick={open}
       title="Telegram · @inkerow"
       aria-label="Open Telegram"
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.94 }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.0, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path
@@ -336,7 +496,7 @@ function TelegramButton() {
           d="M9.78 15.71l-.39 4.16c.56 0 .8-.24 1.1-.53l2.63-2.5 5.46 4c1 .55 1.72.26 1.98-.93L21.93 4.5c.32-1.46-.53-2.04-1.5-1.68L2.96 9.96c-1.43.55-1.4 1.34-.24 1.7l4.5 1.4 10.45-6.6c.5-.31.94-.14.58.18"
         />
       </svg>
-    </button>
+    </motion.button>
   );
 }
 
@@ -356,8 +516,8 @@ function phaseLabel(p: Phase): string {
 }
 
 /* ──────────────────────────────────────────────────────────
-   Background — holographic aurora + spinning conic disc +
-   chromatic sweep + sparse twinkling starfield
+   Background — pure B&W: dot grid + drifting spotlight +
+   diagonal scan + sparse twinkling stars
    ────────────────────────────────────────────────────────── */
 
 type Star = { id: number; left: number; top: number; size: number; delay: number };
@@ -365,7 +525,7 @@ type Star = { id: number; left: number; top: number; size: number; delay: number
 function Background() {
   const stars = useMemo<Star[]>(() => {
     const out: Star[] = [];
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 70; i++) {
       out.push({
         id: i,
         left: Math.random() * 100,
@@ -377,35 +537,44 @@ function Background() {
     return out;
   }, []);
 
+  // Mouse-driven spotlight position (subtle parallax + auto-drift fallback).
+  const mx = useSpring(useMotionValue(0.5), { stiffness: 60, damping: 22 });
+  const my = useSpring(useMotionValue(0.4), { stiffness: 60, damping: 22 });
+  useEffect(() => {
+    const move = (e: MouseEvent) => {
+      mx.set(e.clientX / window.innerWidth);
+      my.set(e.clientY / window.innerHeight);
+    };
+    window.addEventListener("mousemove", move);
+    return () => window.removeEventListener("mousemove", move);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const spotX = useTransform(mx, (v) => `${v * 100}%`);
+  const spotY = useTransform(my, (v) => `${v * 100}%`);
+
   return (
     <div className="canvas">
-      {/* Holographic conic disc — slowly rotating iridescent palette */}
-      <div className="holo-disc" />
+      {/* Dot matrix grid — breathing waves of subtle white dots */}
+      <div className="dotgrid" />
+      <div className="dotgrid dotgrid-2" />
 
-      {/* Aurora blobs — drifting cyan/violet/pink/teal */}
+      {/* Mouse-following spotlight (white halo) */}
       <motion.div
-        className="aurora-blob cyan"
-        animate={{ x: [0, 60, -20, 0], y: [0, 40, -30, 0] }}
+        className="spotlight"
+        style={
+          { ["--sx" as string]: spotX, ["--sy" as string]: spotY } as React.CSSProperties
+        }
+      />
+
+      {/* Auto-drifting ambient halo (so it's alive even without mouse) */}
+      <motion.div
+        className="spotlight ambient"
+        animate={{ x: [0, 120, -80, 0], y: [0, 60, -40, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.div
-        className="aurora-blob violet"
-        animate={{ x: [0, -50, 30, 0], y: [0, -40, 20, 0] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="aurora-blob pink"
-        animate={{ x: [0, 40, -30, 0], y: [0, -25, 35, 0] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="aurora-blob teal"
-        animate={{ x: [0, -35, 25, 0], y: [0, 30, -40, 0] }}
-        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
-      />
 
-      {/* Chromatic prism sweep — periodic horizontal pass */}
-      <div className="chroma-sweep" />
+      {/* Diagonal scan line — periodic sweep across screen */}
+      <div className="scanline" />
 
       {/* Sparse twinkling starfield (depth) */}
       <div className="starfield">
@@ -430,7 +599,6 @@ function Background() {
         ))}
       </div>
 
-      {/* Subtle film grain + vignette */}
       <div className="grain" />
       <div className="vignette" />
     </div>
@@ -438,17 +606,19 @@ function Background() {
 }
 
 /* ──────────────────────────────────────────────────────────
-   Logo — dark rounded square with white cloud silhouette
+   Logo — dark rounded square with white cloud + ring effects
    ────────────────────────────────────────────────────────── */
 
 function Logo({
   pulse,
   breathe,
   small,
+  withRings,
 }: {
   pulse?: boolean;
   breathe?: boolean;
   small?: boolean;
+  withRings?: boolean;
 }) {
   const animate = pulse
     ? { scale: [1, 1.025, 1] }
@@ -466,6 +636,25 @@ function Logo({
       className="logo-wrap"
       style={small ? { width: 96, height: 96 } : undefined}
     >
+      {withRings && (
+        <>
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              className="logo-ring"
+              initial={{ scale: 0.8, opacity: 0.45 }}
+              animate={{ scale: 1.7, opacity: 0 }}
+              transition={{
+                duration: 3.2,
+                delay: i * 1.05,
+                repeat: Infinity,
+                ease: "easeOut",
+              }}
+            />
+          ))}
+          <span className="logo-conic" />
+        </>
+      )}
       <motion.div
         className="logo-halo"
         animate={
@@ -490,7 +679,6 @@ function Logo({
 }
 
 function CloudGlyph() {
-  // Filled white cloud silhouette inside the dark square.
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true">
       <path
