@@ -816,7 +816,7 @@ function MoodCorrectionButton({ track }: { track: Track }) {
                   })}
                 </p>
                 <p className="text-[10px] text-white/45">
-                  {t('track.moodConfirmHint', 'This will train SoundWave recommendations.')}
+                  {t('track.moodConfirmHint', 'This will train your recommendations.')}
                 </p>
                 <div className="flex items-center gap-2">
                   <button

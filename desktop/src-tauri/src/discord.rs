@@ -114,41 +114,35 @@ pub fn discord_set_activity(
 
     let mut activity = Activity::new()
         .activity_type(ActivityType::Listening)
-        .status_display_type(StatusDisplayType::Details)
         .assets(assets);
 
-    activity = match mode {
-        DiscordRpcMode::Text => {
-            let state_text = if is_playing {
-                track.lyric_line.as_deref().unwrap_or(track.artist.as_str())
-            } else {
-                "Paused"
-            };
-            activity
-                .details(text_mode_details.as_deref().unwrap_or(track.title.as_str()))
-                .state(state_text)
-        }
-        DiscordRpcMode::Track => activity.details(&track.title).state(if is_playing {
-            track.artist.as_str()
-        } else {
-            "Paused"
-        }),
-        DiscordRpcMode::Artist => {
-            let activity = activity.details(&track.artist);
-            if is_playing {
+    if !is_playing {
+        activity = activity
+            .status_display_type(StatusDisplayType::Name)
+            .details("EzzCloud");
+    } else {
+        activity = match mode {
+            DiscordRpcMode::Text => {
+                let state_text = track.lyric_line.as_deref().unwrap_or(track.artist.as_str());
                 activity
-            } else {
-                activity.state("Paused")
+                    .status_display_type(StatusDisplayType::Details)
+                    .details(text_mode_details.as_deref().unwrap_or(track.title.as_str()))
+                    .state(state_text)
             }
-        }
-        DiscordRpcMode::Activity => {
-            if is_playing {
-                activity.details("Listening on SoundCloud")
-            } else {
-                activity.details("Paused")
-            }
-        }
-    };
+            DiscordRpcMode::Track => activity
+                .status_display_type(StatusDisplayType::Details)
+                .details(&track.title)
+                .state(track.artist.as_str()),
+            // "Listening to <artist>" header + title (large) + artist (state) + progress bar.
+            DiscordRpcMode::Artist => activity
+                .status_display_type(StatusDisplayType::State)
+                .details(&track.title)
+                .state(track.artist.as_str()),
+            DiscordRpcMode::Activity => activity
+                .status_display_type(StatusDisplayType::Name)
+                .details("Listening on SoundCloud"),
+        };
+    }
 
     if is_playing {
         activity = activity.timestamps(timestamps);

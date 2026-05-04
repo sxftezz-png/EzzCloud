@@ -69,7 +69,11 @@
     "copyLink": "Copy link",
     "copied": "Copied!",
     "restoringSession": "Restoring session",
-    "startingApp": "Starting app..."
+    "startingApp": "Starting app...",
+    "soundwaveLinking": "Setting up personalized recommendations…",
+    "soundwaveLinked": "Recommendations are now personalized",
+    "soundwaveLinkFailed": "Couldn't set up personalized recommendations",
+    "soundwaveSkip": "Skip"
   },
   "search": {
     "placeholder": "Search tracks, playlists, users...",
@@ -112,7 +116,7 @@
     "moodCorrection": "Correct mood",
     "moodChoose": "Choose the correct mood",
     "moodConfirmPrompt": "Are you sure about \"{{mood}}\"?",
-    "moodConfirmHint": "This will train SoundWave recommendations.",
+    "moodConfirmHint": "This will train your recommendations.",
     "moodConfirmYes": "Yes, apply",
     "moodConfirmNo": "Cancel",
     "moodEnergetic": "Energetic",

@@ -1,0 +1,775 @@
+/* ──────────────────────────────────────────────────────────
+   EzzCloud Installer — B&W premium UI
+   ────────────────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #050507;
+  color: #fafafa;
+  font-family:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
+  font-feature-settings: "ss01", "ss02", "cv01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font-family: inherit;
+  font-feature-settings: inherit;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Shell — full-bleed dark canvas (window has native chrome)
+   ────────────────────────────────────────────────────────── */
+
+.shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  background: #050507;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* ── Dot matrix grid — breathing waves of subtle white dots ─ */
+
+.dotgrid {
+  position: absolute;
+  inset: -10%;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.13) 1px,
+    transparent 1.4px
+  );
+  background-size: 26px 26px;
+  background-position: 0 0;
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.85) 30%,
+    rgba(0, 0, 0, 0.35) 65%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.85) 30%,
+    rgba(0, 0, 0, 0.35) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: dot-pulse 7s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+.dotgrid.dotgrid-2 {
+  background-position: 13px 13px;
+  animation-delay: -3.5s;
+  opacity: 0.55;
+}
+
+@keyframes dot-pulse {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* ── Spotlight (mouse-following) + ambient drifting glow ─── */
+
+.spotlight {
+  position: absolute;
+  width: 720px;
+  height: 720px;
+  top: 0;
+  left: 0;
+  transform: translate(calc(var(--sx, 50%) - 50%), calc(var(--sy, 50%) - 50%));
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    transparent 65%
+  );
+  filter: blur(40px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.spotlight.ambient {
+  width: 560px;
+  height: 560px;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 60%
+  );
+  filter: blur(60px);
+  opacity: 0.7;
+}
+
+/* ── Diagonal scan line — periodic prism-like sweep ──────── */
+
+.scanline {
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.04) 47%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.04) 53%,
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: scan 9s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-30%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(30%);
+    opacity: 0;
+  }
+}
+
+/* ── Starfield ────────────────────────────────────────────── */
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  will-change: opacity;
+}
+
+/* ── Film grain + vignette ───────────────────────────────── */
+
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    130% 100% at 50% 50%,
+    transparent 35%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Content — single centered column
+   ────────────────────────────────────────────────────────── */
+
+.content {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Logo — dark rounded square, white cloud silhouette,
+   concentric rings + monochrome conic border
+   ────────────────────────────────────────────────────────── */
+
+.logo-wrap {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+}
+
+.logo-halo {
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.16) 0%,
+    transparent 65%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* Concentric rippling rings around the logo (idle scene) */
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Slowly rotating conic border ring around the logo card */
+.logo-conic {
+  position: absolute;
+  inset: -3px;
+  border-radius: 25px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.55) 28deg,
+    transparent 80deg,
+    transparent 180deg,
+    rgba(255, 255, 255, 0.4) 220deg,
+    transparent 280deg
+  );
+  filter: blur(2px);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+  pointer-events: none;
+  animation: conic-spin 5.5s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes conic-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #1c1d23 0%, #0c0d12 100%);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 18px 36px rgba(0, 0, 0, 0.55);
+  z-index: 2;
+  will-change: transform;
+}
+
+.logo svg {
+  width: 56%;
+  height: 56%;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+/* ──────────────────────────────────────────────────────────
+   Typography
+   ────────────────────────────────────────────────────────── */
+
+.title {
+  margin: 22px 0 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #fafafa;
+  letter-spacing: -0.018em;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.title-sub {
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+}
+
+.title-sub b {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.subtitle {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.01em;
+  text-align: center;
+  line-height: 1.55;
+}
+
+.error {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: rgba(255, 200, 200, 0.65);
+  text-align: center;
+  max-width: 340px;
+  line-height: 1.55;
+}
+
+.hint {
+  margin-top: 22px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.hint kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 0 2px;
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+/* ──────────────────────────────────────────────────────────
+   CTAs — magnetic buttons, primary white, ghost outlined
+   ────────────────────────────────────────────────────────── */
+
+.cta-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.cta {
+  position: relative;
+  padding: 11px 28px;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+  color: #050507;
+  background: linear-gradient(180deg, #ffffff 0%, #ededf0 100%);
+  box-shadow:
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 6px 18px rgba(0, 0, 0, 0.35),
+    0 0 0 0 rgba(255, 255, 255, 0);
+  transition:
+    filter 200ms ease,
+    box-shadow 220ms ease;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.cta .cta-label {
+  position: relative;
+  z-index: 2;
+}
+
+.cta:hover {
+  filter: brightness(1.04);
+  box-shadow:
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    0 0 0 4px rgba(255, 255, 255, 0.06);
+}
+
+.cta.ghost {
+  background: rgba(255, 255, 255, 0.03);
+  color: #fafafa;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.cta.ghost:hover {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.26),
+    0 0 0 4px rgba(255, 255, 255, 0.04);
+}
+
+/* Shimmer overlay — diagonal white pass on hover */
+.cta.shimmer .shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+  transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+}
+
+.cta.shimmer:hover .shimmer-overlay {
+  transform: translateX(110%);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Settings — slide-down panel with toggles
+   ────────────────────────────────────────────────────────── */
+
+.settings {
+  margin-top: 18px;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 4px 16px;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.opt:last-child {
+  border-bottom: 0;
+}
+
+.opt small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+
+.path {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Custom toggle switch */
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 220ms ease;
+  margin: 0;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fafafa;
+  border-radius: 50%;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms;
+}
+
+.toggle:checked {
+  background: #fafafa;
+}
+
+.toggle:checked::after {
+  background: #050507;
+  transform: translateX(12px);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Progress + steps (installing scene)
+   ────────────────────────────────────────────────────────── */
+
+.progress {
+  position: relative;
+  margin-top: 22px;
+  width: 100%;
+  max-width: 420px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.6), #ffffff);
+  transition: width 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.95) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-80px);
+  }
+  100% {
+    transform: translateX(460px);
+  }
+}
+
+.steps {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.4);
+  transition:
+    color 220ms,
+    background 220ms,
+    border-color 220ms;
+}
+
+.step.active {
+  color: #fafafa;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.step.done {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.step .dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #050507;
+}
+
+.step.active .dot::after {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.85s linear infinite;
+}
+
+.step.done .dot {
+  background: #fafafa;
+  border-color: #fafafa;
+}
+
+.step.done .dot svg {
+  width: 10px;
+  height: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Success ring (done scene)
+   ────────────────────────────────────────────────────────── */
+
+.success-ring {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffffff, #d4d4d8);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 18px 36px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.success-ring svg {
+  width: 46px;
+  height: 46px;
+  fill: none;
+  stroke: #050507;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: draw 700ms cubic-bezier(0.16, 1, 0.3, 1) 250ms forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Footer
+   ────────────────────────────────────────────────────────── */
+
+.footer {
+  position: relative;
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 0;
+  z-index: 5;
+  pointer-events: none;
+  padding: 10px 0 14px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Telegram FAB — monochrome circular icon
+   ────────────────────────────────────────────────────────── */
+
+.tg-fab {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition:
+    background 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease;
+  z-index: 20;
+}
+
+.tg-fab:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #050507;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 6px 22px rgba(255, 255, 255, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.tg-fab svg {
+  width: 18px;
+  height: 18px;
+  transform: translateX(-1px);
+}

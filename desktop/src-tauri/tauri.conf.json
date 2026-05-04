@@ -42,7 +42,23 @@
       "appimage": {
         "bundleMediaFramework": true
       }
-    }
+    },
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "installer/header.bmp",
+        "sidebarImage": "installer/sidebar.bmp",
+        "installMode": "currentUser",
+        "languages": [
+          "English",
+          "Russian"
+        ],
+        "displayLanguageSelector": true,
+        "compression": "lzma"
+      }
+    },
+    "publisher": "Inkerov",
+    "copyright": "\u00a9 Inkerov"
   },
   "plugins": {
     "updater": {
