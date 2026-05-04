@@ -22,7 +22,7 @@ body,
 #root {
   width: 100%;
   height: 100%;
-  background: transparent;
+  background: #050507;
   color: #fafafa;
   overflow: hidden;
 }
@@ -32,24 +32,17 @@ button {
 }
 
 /* ──────────────────────────────────────────────────────────
-   SHELL — black canvas + drifting orbs + film grain
-   The shell is the rounded host window.  Glass panel sits on
-   top and refracts the orbs underneath.
+   Shell — full-bleed dark canvas with starfield + drifting orbs
    ────────────────────────────────────────────────────────── */
 
 .shell {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: #050507;
-  border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   isolation: isolate;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 30px 80px rgba(0, 0, 0, 0.6);
 }
 
 .canvas {
@@ -59,50 +52,42 @@ button {
   z-index: 0;
 }
 
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  will-change: opacity;
+}
+
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.55;
+  filter: blur(80px);
   will-change: transform;
 }
 
 .orb.a {
-  width: 360px;
-  height: 360px;
-  top: -120px;
-  left: -90px;
-  background: radial-gradient(circle, #ffffff 0%, transparent 60%);
-  opacity: 0.18;
-}
-
-.orb.b {
-  width: 320px;
-  height: 320px;
-  bottom: -120px;
-  right: -90px;
-  background: radial-gradient(circle, #4a4f6a 0%, transparent 65%);
+  width: 420px;
+  height: 420px;
+  top: -160px;
+  left: -120px;
+  background: radial-gradient(circle, #2a2d3a 0%, transparent 65%);
   opacity: 0.55;
 }
 
-.orb.c {
-  width: 220px;
-  height: 220px;
-  top: 30%;
-  right: -60px;
-  background: radial-gradient(circle, #2a2d3a 0%, transparent 65%);
-  opacity: 0.6;
-}
-
-.grain {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  background-size: 180px 180px;
-  mix-blend-mode: overlay;
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 2;
+.orb.b {
+  width: 360px;
+  height: 360px;
+  bottom: -160px;
+  right: -120px;
+  background: radial-gradient(circle, #353846 0%, transparent 65%);
+  opacity: 0.55;
 }
 
 .vignette {
@@ -110,201 +95,126 @@ button {
   inset: 0;
   background: radial-gradient(
     120% 90% at 50% 50%,
-    transparent 35%,
-    rgba(0, 0, 0, 0.55) 100%
+    transparent 30%,
+    rgba(0, 0, 0, 0.5) 100%
   );
   pointer-events: none;
-  z-index: 3;
 }
 
 /* ──────────────────────────────────────────────────────────
-   TITLEBAR
-   ────────────────────────────────────────────────────────── */
-
-.titlebar {
-  position: relative;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 8px;
-  z-index: 10;
-}
-
-.titlebar-drag {
-  position: absolute;
-  inset: 0;
-  -webkit-app-region: drag;
-}
-
-.titlebar button {
-  -webkit-app-region: no-drag;
-  width: 28px;
-  height: 28px;
-  border: 0;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 14px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition:
-    background 160ms ease,
-    color 160ms ease;
-}
-
-.titlebar button:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fafafa;
-}
-
-.titlebar button.close:hover {
-  background: rgba(232, 17, 35, 0.85);
-  color: white;
-}
-
-/* ──────────────────────────────────────────────────────────
-   GLASS PANEL — frosted card containing the scenes
+   Content — single centered column, no card chrome
    ────────────────────────────────────────────────────────── */
 
 .content {
   position: relative;
-  flex: 1;
-  display: grid;
-  place-items: center;
   z-index: 4;
-  padding: 0 28px 28px;
-}
-
-.glass {
-  position: relative;
-  width: 100%;
-  max-width: 432px;
-  padding: 36px 32px 30px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.04);
-  -webkit-backdrop-filter: blur(28px) saturate(140%);
-  backdrop-filter: blur(28px) saturate(140%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 30px 60px rgba(0, 0, 0, 0.45);
-  isolation: isolate;
-}
-
-.glass::before {
-  /* subtle hairline highlight on top edge */
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 22px;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    transparent 30%
-  );
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 
 .scene {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 460px;
 }
 
 /* ──────────────────────────────────────────────────────────
-   LOGO — custom SVG monogram
+   Logo — dark rounded square with white cloud silhouette
    ────────────────────────────────────────────────────────── */
 
 .logo-wrap {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 132px;
+  height: 132px;
   display: grid;
   place-items: center;
 }
 
 .logo-halo {
   position: absolute;
-  inset: -16px;
+  inset: -22px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.13) 0%,
     transparent 65%
   );
-  filter: blur(14px);
+  filter: blur(20px);
 }
 
 .logo {
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
   border-radius: 22px;
-  background: linear-gradient(180deg, #fafafa 0%, #d4d4d8 100%);
+  background: linear-gradient(180deg, #1c1d23 0%, #0c0d12 100%);
   display: grid;
   place-items: center;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-    0 14px 30px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 16px 36px rgba(0, 0, 0, 0.55);
+  position: relative;
+  overflow: hidden;
 }
 
 .logo svg {
-  width: 44px;
-  height: 44px;
-  color: #050507;
+  width: 52px;
+  height: 52px;
+  color: #fafafa;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
 }
 
 /* ──────────────────────────────────────────────────────────
-   TYPOGRAPHY
+   Typography
    ────────────────────────────────────────────────────────── */
 
 .title {
   margin-top: 22px;
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: -0.012em;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: #fafafa;
   text-align: center;
 }
 
-.title em {
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: -0.018em;
+.title-sub {
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  letter-spacing: 0;
 }
 
-.byline {
-  margin-top: 8px;
-  font-size: 11.5px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
-  text-align: center;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.title-sub b {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .subtitle {
-  margin-top: 16px;
-  font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.55);
+  margin-top: 18px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
   text-align: center;
-  max-width: 320px;
+  max-width: 380px;
   line-height: 1.55;
   font-weight: 400;
 }
 
 /* ──────────────────────────────────────────────────────────
-   BUTTONS
+   Buttons — pill, ghost + filled white
    ────────────────────────────────────────────────────────── */
 
 .cta-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 28px;
+  margin-top: 26px;
 }
 
 .cta {
@@ -322,7 +232,7 @@ button {
     inset 0 -1px 0 rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
     0 6px 18px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.15);
+    0 0 0 1px rgba(255, 255, 255, 0.18);
   transition:
     transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
     filter 180ms ease,
@@ -336,7 +246,7 @@ button {
     inset 0 -1px 0 rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
     0 10px 28px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.25);
+    0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
 .cta:active {
@@ -345,23 +255,102 @@ button {
 }
 
 .cta.ghost {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   color: #fafafa;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
 .cta.ghost:hover {
-  background: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.08);
   filter: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
 }
 
 /* ──────────────────────────────────────────────────────────
-   PROGRESS + STEPS
+   Settings panel (slides down from buttons)
+   ────────────────────────────────────────────────────────── */
+
+.settings {
+  margin-top: 18px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.opt small {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  margin-top: 1px;
+  display: block;
+  letter-spacing: 0;
+}
+
+.toggle {
+  appearance: none;
+  width: 30px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 200ms ease;
+  flex-shrink: 0;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fafafa;
+  border-radius: 50%;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle:checked {
+  background: #fafafa;
+}
+
+.toggle:checked::after {
+  background: #050507;
+  transform: translateX(12px);
+}
+
+.path {
+  font-family: "JetBrains Mono", "Fira Mono", "Consolas", ui-monospace,
+    monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 10px;
+  border-radius: 8px;
+  word-break: break-all;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Progress + steps (installing scene)
    ────────────────────────────────────────────────────────── */
 
 .progress {
-  margin-top: 24px;
+  margin-top: 22px;
   width: 100%;
   height: 2px;
   border-radius: 999px;
@@ -377,10 +366,10 @@ button {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.6) 0%,
     #ffffff 100%
   );
-  transition: width 340ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 360ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .progress-fill::after {
@@ -403,7 +392,7 @@ button {
     transform: translateX(-80px);
   }
   100% {
-    transform: translateX(380px);
+    transform: translateX(460px);
   }
 }
 
@@ -413,6 +402,7 @@ button {
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  max-width: 420px;
 }
 
 .step {
@@ -488,28 +478,28 @@ button {
 }
 
 /* ──────────────────────────────────────────────────────────
-   DONE / ERROR
+   Done / Error
    ────────────────────────────────────────────────────────── */
 
 .success-ring {
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   background: linear-gradient(180deg, #ffffff 0%, #d4d4d8 100%);
   display: grid;
   place-items: center;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 14px 30px rgba(0, 0, 0, 0.4),
+    0 18px 36px rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 .success-ring svg {
-  width: 38px;
-  height: 38px;
+  width: 46px;
+  height: 46px;
   stroke: #050507;
   fill: none;
-  stroke-width: 2.4;
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -530,21 +520,18 @@ button {
   color: #ff8585;
   font-size: 12.5px;
   margin-top: 14px;
-  max-width: 320px;
+  max-width: 360px;
   text-align: center;
   line-height: 1.55;
 }
 
 .footer {
-  position: absolute;
-  bottom: 12px;
-  left: 0;
-  right: 0;
+  position: relative;
   text-align: center;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.22);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 0;
   z-index: 5;
   pointer-events: none;
+  padding: 10px 0 14px;
 }

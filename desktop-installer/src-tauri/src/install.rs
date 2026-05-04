@@ -4,6 +4,8 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 use tokio::io::AsyncWriteExt;
 
+use crate::InstallOpts;
+
 #[derive(Serialize, Clone)]
 struct Progress {
     phase: &'static str,
@@ -14,7 +16,11 @@ fn emit(app: &AppHandle, phase: &'static str, percent: u8) {
     let _ = app.emit("install:progress", Progress { phase, percent });
 }
 
-pub async fn run(app: AppHandle, payload: &'static [u8]) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn run(
+    app: AppHandle,
+    payload: &'static [u8],
+    opts: InstallOpts,
+) -> Result<(), Box<dyn std::error::Error>> {
     if payload.is_empty() {
         return Err("Installer payload missing — please re-download the setup file.".into());
     }
@@ -42,11 +48,14 @@ pub async fn run(app: AppHandle, payload: &'static [u8]) -> Result<(), Box<dyn s
 
     // ── Phase 3: shortcuts ───────────────────────────────────
     emit(&app, "shortcuts", 82);
+    let make_desktop = opts.desktop_shortcut;
     tokio::task::spawn_blocking({
         let exe_path = exe_path.clone();
         move || -> Result<(), String> {
             create_start_menu_shortcut(&exe_path).map_err(|e| e.to_string())?;
-            create_desktop_shortcut(&exe_path).map_err(|e| e.to_string())?;
+            if make_desktop {
+                create_desktop_shortcut(&exe_path).map_err(|e| e.to_string())?;
+            }
             Ok(())
         }
     })
