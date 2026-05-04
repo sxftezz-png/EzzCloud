@@ -312,8 +312,31 @@ export default function App() {
         </AnimatePresence>
       </div>
 
-      <div className="footer">EzzCloud — Created by @inkerov</div>
+      <TelegramButton />
+
+      <div className="footer">EzzCloud — Created by Inkerov</div>
     </div>
+  );
+}
+
+function TelegramButton() {
+  const open = () => {
+    invoke("open_url", { url: "https://t.me/inkerow" }).catch(() => {});
+  };
+  return (
+    <button
+      className="tg-fab"
+      onClick={open}
+      title="Telegram · @inkerow"
+      aria-label="Open Telegram"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M9.78 15.71l-.39 4.16c.56 0 .8-.24 1.1-.53l2.63-2.5 5.46 4c1 .55 1.72.26 1.98-.93L21.93 4.5c.32-1.46-.53-2.04-1.5-1.68L2.96 9.96c-1.43.55-1.4 1.34-.24 1.7l4.5 1.4 10.45-6.6c.5-.31.94-.14.58.18"
+        />
+      </svg>
+    </button>
   );
 }
 
