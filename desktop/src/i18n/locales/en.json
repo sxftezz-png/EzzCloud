@@ -192,7 +192,16 @@
     "endOfFeed": "You're all caught up",
     "recommended": "Recommended For You",
     "discover": "Discover",
-    "startListening": "Start Listening"
+    "startListening": "Start Listening",
+    "mixes": "Mixes for you"
+  },
+  "mix": {
+    "label": "Mix",
+    "basedOn": "Based on tracks by {{artist}}",
+    "trackList": "Tracks in this mix",
+    "empty": "No tracks for this mix yet",
+    "tracksCount_one": "{{count}} track",
+    "tracksCount_other": "{{count}} tracks"
   },
   "settings": {
     "title": "Settings",

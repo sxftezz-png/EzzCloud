@@ -92,7 +92,7 @@ pub fn discord_set_activity(
     let elapsed = track.elapsed_secs.unwrap_or(0);
     let start = now - elapsed;
     let is_playing = track.is_playing.unwrap_or(true);
-    let mode = track.mode.unwrap_or(DiscordRpcMode::Text);
+    let mode = track.mode.unwrap_or(DiscordRpcMode::Artist);
     let show_button = track.show_button.unwrap_or(true);
     let button_mode = track
         .button_mode
@@ -104,13 +104,20 @@ pub fn discord_set_activity(
     };
 
     let mut timestamps = Timestamps::new().start(start);
-    if let Some(dur) = track.duration_secs {
+    if let Some(dur) = track.duration_secs.filter(|d| *d > 0) {
         timestamps = timestamps.end(start + dur);
     }
 
-    let large_image = track.artwork_url.as_deref().unwrap_or("soundcloud_logo");
+    let large_image = track
+        .artwork_url
+        .as_deref()
+        .filter(|s| !s.is_empty())
+        .unwrap_or("soundcloud_logo");
+    let large_text = format!("{} \u{2014} {}", track.title, track.artist);
 
-    let assets = Assets::new().large_image(large_image);
+    let assets = Assets::new()
+        .large_image(large_image)
+        .large_text(large_text.as_str());
 
     let mut activity = Activity::new()
         .activity_type(ActivityType::Listening)

@@ -506,6 +506,8 @@ const MixShelf = React.memo(function MixShelf({
   pool: ReturnType<typeof useRelatedPool>['data'];
   isLoading: boolean;
 }) {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
   const recommendedTracks = useRecommendedTracks(pool, 6); // Just top 6 for mixes
 
   const mixColors = ['#ff5500', '#00ffcc', '#ff00ff', '#f0f000', '#0099ff', '#ff3300'];
@@ -515,7 +517,7 @@ const MixShelf = React.memo(function MixShelf({
   return (
     <section>
       <SectionHeader
-        title="Миксы для тебя"
+        title={t('home.mixes')}
         icon={<Headphones size={15} className="text-accent" />}
       />
       <HorizontalScroll>
@@ -531,8 +533,7 @@ const MixShelf = React.memo(function MixShelf({
               artworkUrl={art(track.artwork_url, 't500x500') ?? undefined}
               color={mixColors[i % mixColors.length]}
               onClick={() => {
-                const { play } = usePlayerStore.getState();
-                play(track, recommendedTracks);
+                navigate(`/mix/${encodeURIComponent(track.urn)}`);
               }}
             />
           ))
