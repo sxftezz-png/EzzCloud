@@ -432,7 +432,7 @@ const DEFAULTS = {
   pinnedPlaylists: [] as SidebarPinnedPlaylist[],
   floatingComments: true,
   discordRpc: true,
-  discordRpcMode: 'track' as DiscordRpcMode,
+  discordRpcMode: 'artist' as DiscordRpcMode,
   discordRpcShowButton: true,
   discordRpcButtonMode: 'soundcloud' as DiscordRpcButtonMode,
   qdrantEnabled: ENV_QDRANT_ENABLED,
@@ -712,8 +712,8 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'sc-settings',
       storage: createJSONStorage(() => tauriStorage),
-      version: 14,
-      migrate: (persistedState) => {
+      version: 15,
+      migrate: (persistedState, fromVersion) => {
         const state = (
           persistedState && typeof persistedState === 'object' ? persistedState : {}
         ) as Partial<SettingsState> & {
@@ -736,9 +736,16 @@ export const useSettingsStore = create<SettingsState>()(
           preferredLanguages: _preferredLanguages,
           ...restState
         } = state;
+        // v15: switch existing 'track' default to 'artist' so users see the artist
+        // line in Discord activity instead of the full track title.
+        const discordRpcMode =
+          fromVersion < 15 && restState.discordRpcMode === 'track'
+            ? ('artist' as DiscordRpcMode)
+            : (restState.discordRpcMode ?? DEFAULTS.discordRpcMode);
         return {
           ...DEFAULTS,
           ...restState,
+          discordRpcMode,
           qdrantUrl,
           qdrantKey,
           pinnedPlaylists,

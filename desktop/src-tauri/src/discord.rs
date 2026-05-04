@@ -119,33 +119,34 @@ pub fn discord_set_activity(
 
     activity = match mode {
         DiscordRpcMode::Text => {
-            let state_text = if is_playing {
-                track.lyric_line.as_deref().unwrap_or(track.artist.as_str())
-            } else {
-                "Paused"
-            };
-            activity
-                .details(text_mode_details.as_deref().unwrap_or(track.title.as_str()))
-                .state(state_text)
-        }
-        DiscordRpcMode::Track => activity.details(&track.title).state(if is_playing {
-            track.artist.as_str()
-        } else {
-            "Paused"
-        }),
-        DiscordRpcMode::Artist => {
-            let activity = activity.details(&track.artist);
             if is_playing {
+                let state_text = track.lyric_line.as_deref().unwrap_or(track.artist.as_str());
                 activity
+                    .details(text_mode_details.as_deref().unwrap_or(track.title.as_str()))
+                    .state(state_text)
             } else {
-                activity.state("Paused")
+                activity.details("EzzCloud")
+            }
+        }
+        DiscordRpcMode::Track => {
+            if is_playing {
+                activity.details(&track.title).state(track.artist.as_str())
+            } else {
+                activity.details("EzzCloud")
+            }
+        }
+        DiscordRpcMode::Artist => {
+            if is_playing {
+                activity.details(&track.artist)
+            } else {
+                activity.details("EzzCloud")
             }
         }
         DiscordRpcMode::Activity => {
             if is_playing {
                 activity.details("Listening on SoundCloud")
             } else {
-                activity.details("Paused")
+                activity.details("EzzCloud")
             }
         }
     };

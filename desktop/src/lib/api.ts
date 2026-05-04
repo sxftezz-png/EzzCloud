@@ -5,7 +5,7 @@ import i18n from '../i18n';
 import { useAppStatusStore } from '../stores/app-status';
 import { useSettingsStore } from '../stores/settings';
 import { waitForAuthHydration } from './auth-hydration';
-import { buildApiUrl, STREAMING_BASE, STREAMING_PREMIUM_BASE } from './constants';
+import { buildApiUrl, getApiBase, STREAMING_BASE, STREAMING_PREMIUM_BASE } from './constants';
 import { getIsPremium } from './subscription';
 
 let sessionId: string | null = null;
@@ -235,10 +235,8 @@ export function streamUrl(
   if (shouldUseHq) {
     params.set('hq', 'true');
   }
-  if (sessionId) {
-    params.set('session_id', sessionId);
-  }
-  return `${STREAMING_BASE}/stream/${encodeURIComponent(trackUrn)}?${params.toString()}`;
+  // Auth via x-session-id header (added by audio_player.rs::audio_load_url).
+  return `${getApiBase()}/tracks/${encodeURIComponent(trackUrn)}/stream?${params.toString()}`;
 }
 
 function buildStreamUrl(base: string, trackUrn: string, premium: boolean, hq: boolean) {
