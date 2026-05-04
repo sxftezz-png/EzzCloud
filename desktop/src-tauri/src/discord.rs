@@ -112,7 +112,7 @@ pub fn discord_set_activity(
         .artwork_url
         .as_deref()
         .filter(|s| !s.is_empty());
-    let large_image = artwork.unwrap_or("soundcloud_logo");
+    let large_image = artwork.unwrap_or("soundcloud-logo");
     let large_text = format!("{} \u{2014} {}", track.title, track.artist);
 
     let mut assets = Assets::new()
@@ -120,9 +120,9 @@ pub fn discord_set_activity(
         .large_text(large_text.as_str());
 
     // Когда у large стоит обложка трека, рисуем мини-лого SoundCloud в углу.
-    // Если обложки нет и large уже = soundcloud_logo — дублировать ассет смысла нет.
+    // Если обложки нет и large уже = soundcloud-logo — дублировать ассет смысла нет.
     if artwork.is_some() {
-        assets = assets.small_image("soundcloud_logo").small_text("SoundCloud");
+        assets = assets.small_image("soundcloud-logo").small_text("SoundCloud");
     }
 
     let mut activity = Activity::new()
