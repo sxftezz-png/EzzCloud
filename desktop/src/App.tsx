@@ -12,6 +12,7 @@ import { hasAuthHydrated } from './lib/auth-hydration';
 import { Home } from './pages/Home';
 import { Library } from './pages/Library';
 import { Login } from './pages/Login';
+import { MixPage } from './pages/MixPage';
 import { OfflinePage } from './pages/OfflinePage';
 import { PlaylistPage } from './pages/PlaylistPage';
 import { Search } from './pages/Search';
@@ -261,6 +262,7 @@ function AppInner() {
               <Route path="offline" element={<OfflinePage />} />
               <Route path="track/:urn" element={<TrackPage />} />
               <Route path="playlist/:urn" element={<PlaylistPage />} />
+              <Route path="mix/:urn" element={<MixPage />} />
               <Route path="user/:urn" element={<UserPage />} />
               <Route path="settings" element={<Settings />} />
             </Route>

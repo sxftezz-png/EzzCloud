@@ -1,16 +1,20 @@
 import { api } from './api';
 
 /**
- * QR-link API — single-use токен для переноса сессии между устройствами.
+ * QR-link API.
  *
- * pull: caller (без сессии) показывает QR, другое (залогиненное) сканирует и пушит.
- * push: caller (залогинен) показывает QR, другое (без сессии) сканирует и забирает.
+ * Под капотом — обычный OAuth-флоу через /auth/login. В QR кодируется готовая
+ * SoundCloud-ссылка на авторизацию: пользователь сканирует телефоном, проходит
+ * вход в браузере, callback завершает сессию на бэке. Десктоп опрашивает
+ * /auth/login/status и забирает sessionId.
  *
- * Результат claim'а в обе стороны — новая сессия на устройстве, у которого её не было.
+ * `mode` сохраняется для совместимости со старыми вызовами, фактически работает
+ * только pull (десктоп без сессии получает sessionId после успешного входа).
  */
 
 export interface CreateLinkResponse {
   linkRequestId: string;
+  /** Готовая HTTPS-ссылка SoundCloud OAuth — кодируется в QR. */
   claimToken: string;
   expiresAt: string;
 }
@@ -22,38 +26,41 @@ export interface LinkStatusResponse {
   error?: string;
 }
 
-export interface ClaimLinkResponse {
-  sessionId: string;
-  mode: 'pull' | 'push';
+interface LoginResponse {
+  url: string;
+  loginRequestId: string;
 }
 
-export async function createLinkRequest(mode: 'pull' | 'push'): Promise<CreateLinkResponse> {
-  return api<CreateLinkResponse>('/auth/link/create', {
-    method: 'POST',
-    body: JSON.stringify({ mode }),
-  });
+interface LoginStatusResponse {
+  status: 'pending' | 'completed' | 'failed' | 'expired';
+  sessionId?: string;
+  error?: string;
 }
 
-export async function claimLinkRequest(claimToken: string): Promise<ClaimLinkResponse> {
-  return api<ClaimLinkResponse>('/auth/link/claim', {
-    method: 'POST',
-    body: JSON.stringify({ claimToken }),
-  });
+const QR_LINK_TTL_MS = 5 * 60 * 1000;
+
+export async function createLinkRequest(_mode: 'pull' | 'push'): Promise<CreateLinkResponse> {
+  const { url, loginRequestId } = await api<LoginResponse>('/auth/login');
+  return {
+    linkRequestId: loginRequestId,
+    claimToken: url,
+    expiresAt: new Date(Date.now() + QR_LINK_TTL_MS).toISOString(),
+  };
 }
 
 export async function getLinkStatus(linkRequestId: string): Promise<LinkStatusResponse> {
-  return api<LinkStatusResponse>(
-    `/auth/link/status?id=${encodeURIComponent(linkRequestId)}`,
+  const data = await api<LoginStatusResponse>(
+    `/auth/login/status?id=${encodeURIComponent(linkRequestId)}`,
   );
+  if (data.status === 'completed') {
+    return { status: 'claimed', mode: 'pull', sessionId: data.sessionId };
+  }
+  if (data.status === 'failed' || data.status === 'expired') {
+    return { status: data.status, mode: 'pull', error: data.error };
+  }
+  return { status: 'pending', mode: 'pull' };
 }
 
-/**
- * Encoded payload для QR. Это deep-link с claimToken, чтобы мобильный клиент
- * мог автоматически открыть приложение и заклеймить.
- *
- * Формат: scd://link?token=<claimToken>&mode=<pull|push>
- */
-export function encodeQrPayload(claimToken: string, mode: 'pull' | 'push'): string {
-  const params = new URLSearchParams({ token: claimToken, mode });
-  return `scd://link?${params.toString()}`;
+export function encodeQrPayload(claimToken: string, _mode: 'pull' | 'push'): string {
+  return claimToken;
 }

@@ -712,7 +712,7 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'sc-settings',
       storage: createJSONStorage(() => tauriStorage),
-      version: 15,
+      version: 16,
       migrate: (persistedState, fromVersion) => {
         const state = (
           persistedState && typeof persistedState === 'object' ? persistedState : {}
@@ -738,10 +738,14 @@ export const useSettingsStore = create<SettingsState>()(
         } = state;
         // v15: switch existing 'track' default to 'artist' so users see the artist
         // line in Discord activity instead of the full track title.
-        const discordRpcMode =
-          fromVersion < 15 && restState.discordRpcMode === 'track'
-            ? ('artist' as DiscordRpcMode)
-            : (restState.discordRpcMode ?? DEFAULTS.discordRpcMode);
+        // v16: same for 'text' — старый дефолт давал generic "Listening to EzzCloud".
+        const persistedRpcMode = restState.discordRpcMode ?? DEFAULTS.discordRpcMode;
+        const discordRpcMode: DiscordRpcMode =
+          fromVersion < 15 && persistedRpcMode === 'track'
+            ? 'artist'
+            : fromVersion < 16 && persistedRpcMode === 'text'
+              ? 'artist'
+              : persistedRpcMode;
         return {
           ...DEFAULTS,
           ...restState,
