@@ -356,7 +356,8 @@ function phaseLabel(p: Phase): string {
 }
 
 /* ──────────────────────────────────────────────────────────
-   Background — drifting orbs + tiny static starfield
+   Background — holographic aurora + spinning conic disc +
+   chromatic sweep + sparse twinkling starfield
    ────────────────────────────────────────────────────────── */
 
 type Star = { id: number; left: number; top: number; size: number; delay: number };
@@ -364,12 +365,12 @@ type Star = { id: number; left: number; top: number; size: number; delay: number
 function Background() {
   const stars = useMemo<Star[]>(() => {
     const out: Star[] = [];
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 60; i++) {
       out.push({
         id: i,
         left: Math.random() * 100,
         top: Math.random() * 100,
-        size: Math.random() < 0.85 ? 1 : 2,
+        size: Math.random() < 0.9 ? 1 : 2,
         delay: Math.random() * 4,
       });
     }
@@ -378,16 +379,35 @@ function Background() {
 
   return (
     <div className="canvas">
+      {/* Holographic conic disc — slowly rotating iridescent palette */}
+      <div className="holo-disc" />
+
+      {/* Aurora blobs — drifting cyan/violet/pink/teal */}
       <motion.div
-        className="orb a"
-        animate={{ x: [0, 30, -10, 0], y: [0, 20, -15, 0] }}
+        className="aurora-blob cyan"
+        animate={{ x: [0, 60, -20, 0], y: [0, 40, -30, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="orb b"
-        animate={{ x: [0, -40, 20, 0], y: [0, -30, 10, 0] }}
+        className="aurora-blob violet"
+        animate={{ x: [0, -50, 30, 0], y: [0, -40, 20, 0] }}
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
       />
+      <motion.div
+        className="aurora-blob pink"
+        animate={{ x: [0, 40, -30, 0], y: [0, -25, 35, 0] }}
+        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="aurora-blob teal"
+        animate={{ x: [0, -35, 25, 0], y: [0, 30, -40, 0] }}
+        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Chromatic prism sweep — periodic horizontal pass */}
+      <div className="chroma-sweep" />
+
+      {/* Sparse twinkling starfield (depth) */}
       <div className="starfield">
         {stars.map((s) => (
           <motion.span
@@ -399,7 +419,7 @@ function Background() {
               width: s.size,
               height: s.size,
             }}
-            animate={{ opacity: [0.2, 0.9, 0.2] }}
+            animate={{ opacity: [0.15, 0.7, 0.15] }}
             transition={{
               duration: 3 + s.delay,
               repeat: Infinity,
@@ -409,6 +429,9 @@ function Background() {
           />
         ))}
       </div>
+
+      {/* Subtle film grain + vignette */}
+      <div className="grain" />
       <div className="vignette" />
     </div>
   );
