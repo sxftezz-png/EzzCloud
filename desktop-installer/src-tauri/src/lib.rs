@@ -96,22 +96,52 @@ fn open_url(url: String) -> Result<(), String> {
 #[cfg(windows)]
 fn enable_dark_titlebar(win: &tauri::WebviewWindow) {
     use windows_sys::Win32::Foundation::HWND;
-    use windows_sys::Win32::Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_USE_IMMERSIVE_DARK_MODE};
+    use windows_sys::Win32::Graphics::Dwm::{
+        DwmSetWindowAttribute, DWMWA_BORDER_COLOR, DWMWA_CAPTION_COLOR, DWMWA_TEXT_COLOR,
+        DWMWA_USE_IMMERSIVE_DARK_MODE,
+    };
 
     if let Ok(handle) = win.hwnd() {
-        // `tauri::WebviewWindow::hwnd()` returns `windows::Win32::Foundation::HWND`.
-        // `handle.0` is either `isize` (older `windows` crate) or `*mut c_void`
-        // (newer). `as HWND` (`*mut c_void`) handles both via Rust's int→raw-ptr
-        // and ptr→ptr cast rules.
+        // See cast notes in earlier commit; this works whether `windows`
+        // wraps an isize or a *mut c_void.
         let hwnd: HWND = handle.0 as HWND;
-        let value: i32 = 1; // BOOL TRUE
-        // SAFETY: hwnd is a valid handle owned by the window we hold a reference to.
+
+        // SAFETY: hwnd is a valid handle owned by the window we hold a reference to;
+        // the values we point at outlive the call.
         unsafe {
+            // 1. Dark mode for title chrome (also tints sysmenu icons white).
+            let dark: i32 = 1;
             let _ = DwmSetWindowAttribute(
                 hwnd,
                 DWMWA_USE_IMMERSIVE_DARK_MODE as u32,
-                &value as *const _ as *const _,
+                &dark as *const _ as *const _,
                 std::mem::size_of::<i32>() as u32,
+            );
+
+            // 2. Caption + border colored to match the installer body (#050507).
+            //    COLORREF format = 0x00BBGGRR, so #050507 → 0x00070505.
+            //    Requires Windows 11 22H2+. Older OS silently ignore it.
+            let caption: u32 = 0x0007_0505;
+            let _ = DwmSetWindowAttribute(
+                hwnd,
+                DWMWA_CAPTION_COLOR as u32,
+                &caption as *const _ as *const _,
+                std::mem::size_of::<u32>() as u32,
+            );
+            let _ = DwmSetWindowAttribute(
+                hwnd,
+                DWMWA_BORDER_COLOR as u32,
+                &caption as *const _ as *const _,
+                std::mem::size_of::<u32>() as u32,
+            );
+
+            // 3. Title text in soft white.
+            let text: u32 = 0x00FA_FAFA;
+            let _ = DwmSetWindowAttribute(
+                hwnd,
+                DWMWA_TEXT_COLOR as u32,
+                &text as *const _ as *const _,
+                std::mem::size_of::<u32>() as u32,
             );
         }
     }
