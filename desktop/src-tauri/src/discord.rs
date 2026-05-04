@@ -97,12 +97,6 @@ pub fn discord_set_activity(
     let button_mode = track
         .button_mode
         .unwrap_or(DiscordRpcButtonMode::Soundcloud);
-    let text_mode_details = if matches!(mode, DiscordRpcMode::Text) {
-        Some(format!("{} - {}", track.title, track.artist))
-    } else {
-        None
-    };
-
     let mut timestamps = Timestamps::new().start(start);
     if let Some(dur) = track.duration_secs.filter(|d| *d > 0) {
         timestamps = timestamps.end(start + dur);
@@ -112,17 +106,25 @@ pub fn discord_set_activity(
         .artwork_url
         .as_deref()
         .filter(|s| !s.is_empty());
-    let large_image = artwork.unwrap_or("soundcloud-logo");
-    let large_text = format!("{} \u{2014} {}", track.title, track.artist);
+
+    // Когда играет — на large обложка трека, в углу мини-лого SoundCloud (тултип "EzzCloud").
+    // На паузе (или без обложки) — large = soundcloud-logo, без small.
+    let (large_image, small_image) = if is_playing {
+        (artwork.unwrap_or("soundcloud-logo"), Some("soundcloud-logo"))
+    } else {
+        ("soundcloud-logo", None)
+    };
+    let large_text = if is_playing {
+        format!("{} \u{2014} {}", track.title, track.artist)
+    } else {
+        "EzzCloud".to_string()
+    };
 
     let mut assets = Assets::new()
         .large_image(large_image)
         .large_text(large_text.as_str());
-
-    // Когда у large стоит обложка трека, рисуем мини-лого SoundCloud в углу.
-    // Если обложки нет и large уже = soundcloud-logo — дублировать ассет смысла нет.
-    if artwork.is_some() {
-        assets = assets.small_image("soundcloud-logo").small_text("SoundCloud");
+    if let Some(small) = small_image {
+        assets = assets.small_image(small).small_text("EzzCloud");
     }
 
     let mut activity = Activity::new()
@@ -130,30 +132,26 @@ pub fn discord_set_activity(
         .assets(assets);
 
     if !is_playing {
+        // Хедер "Listening to EzzCloud" (Name) + details="Using EzzCloud" + state="Paused".
         activity = activity
             .status_display_type(StatusDisplayType::Name)
-            .details("EzzCloud");
+            .details("Using EzzCloud")
+            .state("Paused");
     } else {
+        // Один и тот же layout для всех режимов: details=title, state=artist.
+        // Меняется только то, что Discord рисует в шапке (status_display_type).
+        activity = activity
+            .details(&track.title)
+            .state(track.artist.as_str());
         activity = match mode {
-            DiscordRpcMode::Text => {
-                let state_text = track.lyric_line.as_deref().unwrap_or(track.artist.as_str());
-                activity
-                    .status_display_type(StatusDisplayType::Details)
-                    .details(text_mode_details.as_deref().unwrap_or(track.title.as_str()))
-                    .state(state_text)
+            // "Listening to <title>"
+            DiscordRpcMode::Track | DiscordRpcMode::Text => {
+                activity.status_display_type(StatusDisplayType::Details)
             }
-            DiscordRpcMode::Track => activity
-                .status_display_type(StatusDisplayType::Details)
-                .details(&track.title)
-                .state(track.artist.as_str()),
-            // "Listening to <artist>" header + title (large) + artist (state) + progress bar.
-            DiscordRpcMode::Artist => activity
-                .status_display_type(StatusDisplayType::State)
-                .details(&track.title)
-                .state(track.artist.as_str()),
-            DiscordRpcMode::Activity => activity
-                .status_display_type(StatusDisplayType::Name)
-                .details("Listening on SoundCloud"),
+            // "Listening to <artist>"
+            DiscordRpcMode::Artist => activity.status_display_type(StatusDisplayType::State),
+            // "Listening to EzzCloud"
+            DiscordRpcMode::Activity => activity.status_display_type(StatusDisplayType::Name),
         };
     }
 
